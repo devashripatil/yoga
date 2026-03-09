@@ -1,0 +1,27 @@
+[
+  {
+    "_id": "69ad5fe36dcfd548b6b16a6b",
+    "userId": "69ad5fe36dcfd548b6b16a50",
+    "classId": {
+      "_id": "69ad5fe26dcfd548b6b16a49",
+      "title": "E2E Sunrise Flow 1772969954723",
+      "description": "A beautiful morning flow for testing integration.",
+      "duration": 60,
+      "schedule": "2026-03-09T11:39:14.723Z",
+      "difficulty": "Beginner",
+      "maxSlots": 20,
+      "category": "Yoga",
+      "feePerSession": 500,
+      "totalSessions": 10,
+      "instructor": "Admin",
+      "createdAt": "2026-03-08T11:39:14.741Z",
+      "updatedAt": "2026-03-08T11:39:14.741Z",
+      "__v": 0
+    },
+    "date": "2026-03-08T11:39:15.295Z",
+    "status": "present",
+    "createdAt": "2026-03-08T11:39:15.315Z",
+    "updatedAt": "2026-03-08T11:39:15.315Z",
+    "__v": 0
+  }
+]
