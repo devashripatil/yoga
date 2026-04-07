@@ -178,7 +178,7 @@ const ManageBookings = () => {
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '1rem' }}>₹{booking.totalAmount || 0}</div>
                     {booking.paymentProof ? (
                       <a
-                        href={`http://localhost:5000${booking.paymentProof}`}
+                        href={`${booking.paymentProof}`}
                         target="_blank"
                         rel="noreferrer"
                         style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#3b82f6', textDecoration: 'none', fontSize: '0.7rem', marginTop: '0.25rem', fontWeight: 600 }}

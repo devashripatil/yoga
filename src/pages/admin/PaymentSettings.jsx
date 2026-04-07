@@ -24,7 +24,7 @@ const PaymentSettings = () => {
 
     const fetchSettings = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin-settings');
+            const response = await fetch('/api/admin-settings');
             if (response.ok) {
                 const data = await response.json();
                 setSettings({
@@ -33,7 +33,7 @@ const PaymentSettings = () => {
                     qrCodeUrl: data.qrCodeUrl || ''
                 });
                 if (data.qrCodeUrl) {
-                    setPreviewUrl(`http://localhost:5000${data.qrCodeUrl}`);
+                    setPreviewUrl(`${data.qrCodeUrl}`);
                 }
             }
         } catch (error) {
@@ -75,7 +75,7 @@ const PaymentSettings = () => {
                 const formData = new FormData();
                 formData.append('image', imageFile);
 
-                const uploadRes = await fetch('http://localhost:5000/api/upload', {
+                const uploadRes = await fetch('/api/upload', {
                     method: 'POST',
                     body: formData,
                 });
@@ -89,7 +89,7 @@ const PaymentSettings = () => {
             }
 
             // Update Settings
-            const updateRes = await fetch('http://localhost:5000/api/admin-settings', {
+            const updateRes = await fetch('/api/admin-settings', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ const PaymentSettings = () => {
                     qrCodeUrl: data.qrCodeUrl
                 });
                 if (data.qrCodeUrl) {
-                    setPreviewUrl(`http://localhost:5000${data.qrCodeUrl}`);
+                    setPreviewUrl(`${data.qrCodeUrl}`);
                 }
             } else {
                 throw new Error('Failed to update settings');

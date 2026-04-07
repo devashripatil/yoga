@@ -65,7 +65,7 @@ const ManageClasses = () => {
         meetingLink: cls.meetingLink || ''
       });
       if (cls.imageUrl) {
-        setPreviewUrl(`http://localhost:5000${cls.imageUrl}`);
+        setPreviewUrl(`${cls.imageUrl}`);
       } else {
         setPreviewUrl('');
       }
@@ -185,7 +185,7 @@ const ManageClasses = () => {
               <div style={{ width: '100%', height: '180px', backgroundColor: '#f1f5f9', position: 'relative', overflow: 'hidden' }}>
                 {cls.imageUrl ? (
                   <img 
-                    src={`http://localhost:5000${cls.imageUrl}`} 
+                    src={`${cls.imageUrl}`} 
                     alt={cls.title} 
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                   />
