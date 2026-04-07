@@ -7,6 +7,10 @@ const { Server } = require('socket.io');
 const path = require('path');
 
 // Connect to database
+// Verify environment variables
+if (!process.env.MONGO_URI) console.error('WARNING: MONGO_URI is not defined in environment variables!');
+if (!process.env.JWT_SECRET) console.error('WARNING: JWT_SECRET is not defined in environment variables! Auth will fail.');
+
 connectDB();
 
 const app = express();
