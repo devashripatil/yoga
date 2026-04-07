@@ -66,6 +66,21 @@ app.get('/api', (req, res) => {
   res.send('Sattva Yoga API is running');
 });
 
+// Health check endpoint for database connection
+app.get('/api/health', async (req, res) => {
+  const mongoose = require('mongoose');
+  const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
+  res.json({ 
+    status: 'Running', 
+    database: dbStatus,
+    env: {
+      has_jwt_secret: !!process.env.JWT_SECRET,
+      has_mongo_uri: !!process.env.MONGO_URI,
+      has_gemini_key: !!process.env.GEMINI_API_KEY
+    }
+  });
+});
+
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get(/.*/, (req, res) => {

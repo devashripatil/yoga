@@ -59,8 +59,12 @@ const registerUser = async (req, res) => {
         name: user.name,
         phone: user.phone,
         role: user.role,
-        token: generateToken(user._id),
+        token: process.env.JWT_SECRET ? generateToken(user._id) : null,
       });
+      if (!process.env.JWT_SECRET) {
+        console.error('CRITICAL ERROR: JWT_SECRET is not defined in environment variables! Token generation failed.');
+      }
+
     } else {
       res.status(400).json({ message: 'Invalid user data' });
     }
@@ -86,8 +90,12 @@ const loginUser = async (req, res) => {
         name: user.name,
         phone: user.phone,
         role: user.role,
-        token: generateToken(user._id),
+        token: process.env.JWT_SECRET ? generateToken(user._id) : null,
       });
+      if (!process.env.JWT_SECRET) {
+        console.error('CRITICAL ERROR: JWT_SECRET is not defined in environment variables! Token generation failed.');
+      }
+
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }
