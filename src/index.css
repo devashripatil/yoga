@@ -1,36 +1,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Color Palette */
-  --primary: #4a7c59; /* Soft Yoga Green */
-  --primary-hover: #3e684a;
-  --primary-dark: #3a6246;
-  --secondary: #cdeac0; /* Light Sage Green */
-  --accent: #e8e2d6; /* Warm Beige */
-  --background: #fdfdfb; /* Off White */
+  /* HSL Color Palette - More control and harmony */
+  --primary-h: 142;
+  --primary-s: 25%;
+  --primary-l: 38%; /* #4a7c59 */
+  
+  --primary: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
+  --primary-hover: hsl(var(--primary-h), var(--primary-s), calc(var(--primary-l) - 5%));
+  --primary-dark: hsl(var(--primary-h), var(--primary-s), calc(var(--primary-l) - 10%));
+  --primary-light: hsl(var(--primary-h), var(--primary-s), 50%);
+  --secondary: hsl(96, 50%, 83%); /* #cdeac0 - Light Sage */
+  --accent: hsl(40, 20%, 88%);    /* #e8e2d6 - Warm Beige */
+  
+  --background: hsl(60, 20%, 99%); /* Off White */
   --white: #ffffff;
-  --text-primary: #2d3748; /* Dark Gray for high contrast */
-  --text-secondary: #4a5568; /* Medium Gray for readable body text */
-  --border: #e2e8f0;
-
+  
+  /* Text Colors */
+  --text-primary: hsl(210, 20%, 23%);   /* #2d3748 */
+  --text-secondary: hsl(210, 15%, 35%); /* #4a5568 */
+  --text-muted: hsl(210, 10%, 60%);
+  
+  /* UI Borders & Shadows */
+  --border: hsl(210, 32%, 91%);
+  --border-light: hsl(210, 32%, 95%);
+  
   /* Typography */
   --font-heading: 'Poppins', sans-serif;
   --font-body: 'Inter', sans-serif;
-  
+
   /* UI Styles */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-  
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
-  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  
-  --transition-fast: 150ms ease-in-out;
-  --transition-normal: 250ms ease-in-out;
-  --transition-slow: 400ms ease-in-out;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 2rem;
+
+  /* Multi-layered Premium Shadows */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-premium: 0 10px 40px -10px rgba(74, 124, 89, 0.15), 0 4px 12px -2px rgba(74, 124, 89, 0.05);
+
+  --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html {
@@ -53,16 +67,29 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   color: var(--primary);
   line-height: 1.2;
   margin-bottom: 1rem;
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.75rem; }
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
 
 p {
   margin-bottom: 1rem;
@@ -99,14 +126,79 @@ a:hover {
   box-shadow: var(--shadow-hover);
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.premium-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-premium);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-normal);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.animate-fade-in {
-  animation: fadeIn 1s ease-out forwards;
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px -12px rgba(74, 124, 89, 0.2);
+  border-color: var(--secondary);
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.subtle-gradient {
+  background: linear-gradient(135deg, var(--white) 0%, var(--background) 100%);
+}
+
+.stat-card-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--white);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 5px;
+  border: 2px solid #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* --- Navbar Styles added dynamically --- */
@@ -146,16 +238,15 @@ a:hover {
   text-decoration: none;
 }
 
-.navbar-logo {
-  width: 32px;
-  height: 32px;
-  background-color: var(--secondary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+.navbar-logo-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  transition: transform var(--transition-fast);
+}
+
+.navbar-logo-img:hover {
+  transform: scale(1.1);
 }
 
 /* Desktop Menu */
@@ -188,7 +279,8 @@ a:hover {
   color: var(--primary);
 }
 
-.nav-link:hover::after, .nav-link.active::after {
+.nav-link:hover::after,
+.nav-link.active::after {
   width: 100%;
 }
 
@@ -277,6 +369,7 @@ a:hover {
 .logout-btn {
   color: #e53e3e;
 }
+
 .logout-btn:hover {
   background-color: #fff5f5;
   color: #c53030;
@@ -380,6 +473,7 @@ a:hover {
   .navbar-menu-desktop {
     display: none;
   }
+
   .hamburger-btn {
     display: flex;
   }
@@ -440,7 +534,7 @@ a:hover {
   left: 0;
   width: 100%;
   padding: 1.5rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
   color: var(--white);
   transition: opacity var(--transition-normal);
   pointer-events: none;
@@ -448,4 +542,18 @@ a:hover {
 
 .guru-card:hover .guru-name {
   opacity: 0;
+}
+
+/* Loading Spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(74, 124, 89, 0.1);
+  border-left-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

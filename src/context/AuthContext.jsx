@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 
@@ -8,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Check if user is logged in
   const checkUserLoggedIn = async () => {
@@ -66,6 +68,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     localStorage.removeItem('token');
     toast.success('Logged out successfully.');
+    navigate('/');
   };
 
   return (

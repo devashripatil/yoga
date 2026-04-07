@@ -49,6 +49,7 @@ app.use('/api/admin-settings', require('./routes/adminSettingsRoutes'));
 app.use('/api/yoga-chat', require('./routes/chatRoutes'));
 app.use('/api/recommendations', require('./routes/recommendationRoutes'));
 app.use('/api/coach', require('./routes/coachRoutes'));
+app.use('/api/queries', require('./routes/queryRoutes'));
 
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

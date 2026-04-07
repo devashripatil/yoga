@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const { generateWellnessPlan } = require('../utils/coachService');
 
 // Generate JWT
 const generateToken = (id) => {
@@ -45,6 +46,14 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
+      // Trigger AI plan generation automatically
+      try {
+        await generateWellnessPlan(user._id);
+      } catch (aiError) {
+        console.error("Initial AI Plan Generation Failed:", aiError.message);
+        // We don't block registration if AI fails
+      }
+
       res.status(201).json({
         _id: user.id,
         name: user.name,

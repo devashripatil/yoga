@@ -3,18 +3,19 @@ import api from '../../utils/api';
 import toast from 'react-hot-toast';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
-import { Check, X, Calendar as CalendarIcon } from 'lucide-react';
+import { Check, X, Calendar as CalendarIcon, User, Search, Filter, RefreshCw, AlertCircle } from 'lucide-react';
 
 const AttendanceTracker = () => {
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default to today
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   
-  const [roster, setRoster] = useState([]); // This would ideally come from bookings for this specific class
-  const [attendanceRecords, setAttendanceRecords] = useState({}); // { userId: 'present' | 'absent' }
+  const [roster, setRoster] = useState([]);
+  const [attendanceRecords, setAttendanceRecords] = useState({});
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // 1. Fetch available classes on mount
+  // Fetch available classes
   useEffect(() => {
     const fetchClasses = async () => {
       try {
@@ -32,37 +33,45 @@ const AttendanceTracker = () => {
     fetchClasses();
   }, []);
 
-  // 2. Fetch bookings and existing attendance when class or date changes
-  useEffect(() => {
+  // Fetch roster and attendance when class/date changes
+  const fetchClassData = async () => {
     if (!selectedClass || !date) return;
+    setRefreshing(true);
+    try {
+      // Fetch bookings to get the roster for this class
+      const bookingsRes = await api.get('/bookings');
+      // Include both confirmed and active bookings in the roster
+      const classBookings = bookingsRes.data.data.filter(b => 
+        b.classId && 
+        b.classId._id === selectedClass && 
+        (b.status === "active" || b.status === "confirmed")
+      );
+      
+      const users = classBookings.map(b => b.userId).filter((v, i, a) => 
+        v && a.findIndex(t => t && t._id === v._id) === i
+      );
+      setRoster(users);
 
-    const fetchClassData = async () => {
-      try {
-        // Fetch ALL bookings and filter manually for this class since we didn't build a `/bookings/class/:id` endpoint
-        const bookingsRes = await api.get('/bookings');
-        const classBookings = bookingsRes.data.data.filter(b => b.classId && b.classId._id === selectedClass && b.status === "active");
-        
-        // Extract unique users
-        const users = classBookings.map(b => b.userId).filter((v, i, a) => a.findIndex(t => (t._id === v._id)) === i);
-        setRoster(users);
-
-        // Fetch attendance for this class
-        const attendanceRes = await api.get(`/attendance/class/${selectedClass}`);
-        // Filter by the selected date in JS
-        const dateRecords = attendanceRes.data.filter(record => record.date.startsWith(date));
-        
-        const recordMap = {};
-        dateRecords.forEach(record => {
+      // Fetch attendance for this specific class and date from backend
+      const attendanceRes = await api.get(`/attendance/class/${selectedClass}?date=${date}`);
+      
+      const recordMap = {};
+      attendanceRes.data.forEach(record => {
+        if (record.userId) {
           recordMap[record.userId._id] = record.status;
-        });
-        
-        setAttendanceRecords(recordMap);
-      } catch (error) {
-        toast.error('Failed to load class roster');
-        console.error(error);
-      }
-    };
+        }
+      });
+      
+      setAttendanceRecords(recordMap);
+    } catch (error) {
+      toast.error('Failed to load class data');
+      console.error(error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
+  useEffect(() => {
     fetchClassData();
   }, [selectedClass, date]);
 
@@ -76,7 +85,6 @@ const AttendanceTracker = () => {
         status
       });
       
-      // Update local state to reflect UI change instantly
       setAttendanceRecords(prev => ({
         ...prev,
         [userId]: status
@@ -87,28 +95,37 @@ const AttendanceTracker = () => {
     }
   };
 
-
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+      <div className="spinner"></div>
+    </div>
+  );
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <h1 style={{ fontSize: '1.5rem', margin: 0, color: '#1e293b' }}>Attendance Tracker</h1>
+    <div className="animate-fade-in" style={{ paddingBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h1 style={{ fontSize: '2.25rem', fontWeight: 700, color: 'var(--primary-dark)', marginBottom: '0.25rem' }}>Attendance Tracker</h1>
+          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Mark and manage daily attendance for your shishyas.</p>
+        </div>
+        <Button variant="ghost" onClick={fetchClassData} disabled={refreshing} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} /> Refresh List
+        </Button>
       </div>
 
-      <Card style={{ marginBottom: '2rem', padding: '1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+      <Card style={{ marginBottom: '2.5rem', padding: '2rem', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', border: 'none', boxShadow: 'var(--shadow-sm)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
           
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600, color: '#475569' }}>
-              Select Class
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', fontSize: '0.9rem', fontWeight: 700, color: '#475569' }}>
+              <Filter size={16} /> SELECT CLASS
             </label>
             <select 
               value={selectedClass || ''} 
               onChange={(e) => setSelectedClass(e.target.value)}
-              style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1', outline: 'none' }}
+              style={{ width: '100%', padding: '1rem', borderRadius: 'var(--radius-lg)', border: '1px solid #e2e8f0', outline: 'none', backgroundColor: 'white', fontWeight: 500, color: '#1e293b', boxShadow: 'var(--shadow-sm)' }}
             >
-              <option value="" disabled>Select a class...</option>
+              {classes.length === 0 && <option disabled>No classes available</option>}
               {classes.map(c => (
                 <option key={c._id} value={c._id}>{c.title} ({c.schedule})</option>
               ))}
@@ -116,81 +133,116 @@ const AttendanceTracker = () => {
           </div>
 
           <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600, color: '#475569' }}>
-              <CalendarIcon size={16} /> Date
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', fontSize: '0.9rem', fontWeight: 700, color: '#475569' }}>
+              <CalendarIcon size={16} /> ATTENDANCE DATE
             </label>
             <input 
               type="date" 
               value={date} 
               onChange={(e) => setDate(e.target.value)}
-              style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1', outline: 'none' }}
+              max={new Date().toISOString().split('T')[0]}
+              style={{ width: '100%', padding: '1rem', borderRadius: 'var(--radius-lg)', border: '1px solid #e2e8f0', outline: 'none', backgroundColor: 'white', fontWeight: 500, color: '#1e293b', boxShadow: 'var(--shadow-sm)' }}
             />
           </div>
 
         </div>
       </Card>
 
-      <Card style={{ overflowX: 'auto', padding: 0 }}>
-        <div style={{ padding: '1.5rem', borderBottom: '1px solid #e2e8f0', backgroundColor: 'white' }}>
-          <h3 style={{ margin: 0, color: '#1e293b' }}>Class Roster</h3>
-          <p style={{ margin: '0.5rem 0 0 0', color: '#64748b', fontSize: '0.875rem' }}>Showing {roster.length} booked students for {classes.find(c => c._id === selectedClass)?.title}</p>
+      <Card style={{ overflowX: 'auto', padding: 0, border: 'none', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-md)' }}>
+        <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #f1f5f9', backgroundColor: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h3 style={{ margin: 0, color: '#1e293b', fontSize: '1.25rem', fontWeight: 700 }}>Class Roster</h3>
+            <p style={{ margin: '0.25rem 0 0 0', color: '#64748b', fontSize: '0.875rem' }}>
+              <strong>{roster.length}</strong> Registered students found for this session
+            </p>
+          </div>
+          <div style={{ padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', backgroundColor: '#f0f9ff', color: '#0369a1', fontSize: '0.8rem', fontWeight: 700 }}>
+            {new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
+          </div>
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, textAlign: 'left' }}>
           <thead>
-            <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-              <th style={{ padding: '1rem', color: '#64748b', fontWeight: 600, fontSize: '0.875rem' }}>Student Details</th>
-              <th style={{ padding: '1rem', color: '#64748b', fontWeight: 600, fontSize: '0.875rem', textAlign: 'center' }}>Mark Attendance</th>
+            <tr style={{ backgroundColor: '#f8fafc' }}>
+              <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Student Information</th>
+              <th style={{ padding: '1.25rem 2rem', color: '#64748b', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'center' }}>Attendance Status</th>
             </tr>
           </thead>
           <tbody>
             {roster.length === 0 ? (
               <tr>
-                <td colSpan="2" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
-                  No students have booked this class yet.
+                <td colSpan="2" style={{ padding: '5rem 2rem', textAlign: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', color: '#94a3b8' }}>
+                    <AlertCircle size={48} opacity={0.5} />
+                    <p style={{ fontSize: '1.1rem', margin: 0 }}>No students have confirmed bookings for this class.</p>
+                    <p style={{ fontSize: '0.9rem', margin: 0 }}>Check the "Manage Bookings" tab to confirm pending requests.</p>
+                  </div>
                 </td>
               </tr>
             ) : (
               roster.map((student) => {
+                if (!student) return null;
                 const status = attendanceRecords[student._id];
                 return (
-                  <tr key={student._id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                    <td style={{ padding: '1rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#e2e8f0', color: '#475569', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 'bold' }}>
+                  <tr key={student._id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background-color 0.2s' }} className="roster-row">
+                    <td style={{ padding: '1.25rem 2rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#f1f5f9', color: 'var(--primary)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 800, fontSize: '1.2rem', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}>
                           {student.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <p style={{ margin: 0, fontWeight: 500, color: '#0f172a' }}>{student.name}</p>
-                          <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>{student.email}</p>
+                          <p style={{ margin: 0, fontWeight: 700, color: '#1e293b', fontSize: '1rem' }}>{student.name}</p>
+                          <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>{student.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td style={{ padding: '1rem', textAlign: 'center' }}>
-                      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                        <button
-                          onClick={() => markAttendance(student._id, 'present')}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s ease', border: 'none',
-                            backgroundColor: status === 'present' ? '#22c55e' : '#f0fdf4',
-                            color: status === 'present' ? 'white' : '#166534',
-                            border: status === 'present' ? '1px solid #22c55e' : '1px solid #bbf7d0'
-                          }}
-                        >
-                          <Check size={16} /> Present
-                        </button>
-                        <button
-                          onClick={() => markAttendance(student._id, 'absent')}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s ease', border: 'none',
-                            backgroundColor: status === 'absent' ? '#ef4444' : '#fef2f2',
-                            color: status === 'absent' ? 'white' : '#991b1b',
-                            border: status === 'absent' ? '1px solid #ef4444' : '1px solid #fecaca'
-                          }}
-                        >
-                          <X size={16} /> Absent
-                        </button>
-                      </div>
+                    <td style={{ padding: '1.25rem 2rem', textAlign: 'center' }}>
+                      {status ? (
+                        <div style={{ 
+                          display: 'inline-flex', 
+                          alignItems: 'center', 
+                          gap: '0.5rem', 
+                          padding: '0.6rem 1.5rem', 
+                          borderRadius: 'var(--radius-lg)', 
+                          fontSize: '0.85rem', 
+                          fontWeight: 800,
+                          backgroundColor: status === 'present' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                          color: status === 'present' ? '#10b981' : '#ef4444',
+                          border: status === 'present' ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(239, 68, 68, 0.2)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em'
+                        }}>
+                          {status === 'present' ? <Check size={16} strokeWidth={3} /> : <X size={16} strokeWidth={3} />}
+                          {status}
+                        </div>
+                      ) : (
+                        <div style={{ display: 'inline-flex', backgroundColor: '#f1f5f9', padding: '0.35rem', borderRadius: 'var(--radius-lg)', gap: '0.35rem', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)' }}>
+                          <button
+                            onClick={() => markAttendance(student._id, 'present')}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.25rem', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', border: 'none',
+                              backgroundColor: 'transparent',
+                              color: '#64748b'
+                            }}
+                            onMouseOver={e => { e.currentTarget.style.backgroundColor = '#10b981'; e.currentTarget.style.color = 'white'; }}
+                            onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#64748b'; }}
+                          >
+                            <Check size={16} strokeWidth={3} /> PRESENT
+                          </button>
+                          <button
+                            onClick={() => markAttendance(student._id, 'absent')}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.25rem', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', border: 'none',
+                              backgroundColor: 'transparent',
+                              color: '#64748b'
+                            }}
+                            onMouseOver={e => { e.currentTarget.style.backgroundColor = '#ef4444'; e.currentTarget.style.color = 'white'; }}
+                            onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#64748b'; }}
+                          >
+                            <X size={16} strokeWidth={3} /> ABSENT
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 );
@@ -199,6 +251,19 @@ const AttendanceTracker = () => {
           </tbody>
         </table>
       </Card>
+      
+      <style>{`
+        .roster-row:hover {
+          background-color: #f8fafc;
+        }
+        .animate-spin {
+          animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };

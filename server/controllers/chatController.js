@@ -17,7 +17,7 @@ const handleChat = async (req, res) => {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         // Use gemini-2.5-flash based on API key permissions
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash",
+            model: "gemini-1.5-flash",
             systemInstruction: "You are a friendly yoga instructor and wellness assistant on a yoga website. Help users with yoga advice, meditation guidance, breathing exercises, and class recommendations. Keep responses simple, supportive, and beginner-friendly. Avoid medical advice. Format your responses with simple markdown spacing."
         });
 

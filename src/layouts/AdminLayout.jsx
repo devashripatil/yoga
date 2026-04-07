@@ -13,7 +13,8 @@ import {
   ListRestart,
   Send,
   CalendarDays,
-  Banknote
+  Banknote,
+  MessageCircle
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -24,7 +25,6 @@ const AdminLayout = () => {
 
   const handleLogout = () => {
     logoutUser();
-    navigate('/admin-login');
   };
 
   const navLinks = [
@@ -36,6 +36,7 @@ const AdminLayout = () => {
     { name: 'Notifications & Email', path: '/admin-dashboard/notifications', icon: <Send size={20} /> },
     { name: 'Schedule Calendar', path: '/admin-dashboard/calendar', icon: <CalendarDays size={20} /> },
     { name: 'Payment Settings', path: '/admin-dashboard/payment-settings', icon: <Banknote size={20} /> },
+    { name: 'User Queries', path: '/admin-dashboard/queries', icon: <MessageCircle size={20} /> },
   ];
 
   return (

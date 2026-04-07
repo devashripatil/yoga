@@ -46,6 +46,10 @@ const classSchema = new mongoose.Schema({
     type: String,
     default: 'Admin',
   },
+  meetingLink: {
+    type: String,
+    default: '',
+  },
 }, {
   timestamps: true,
 });

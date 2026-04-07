@@ -12,6 +12,18 @@ const adminSettingsSchema = new mongoose.Schema({
     qrCodeUrl: {
         type: String,
     },
+    bankAccount: {
+        type: String,
+    },
+    accountHolder: {
+        type: String,
+    },
+    ifscCode: {
+        type: String,
+    },
+    bankName: {
+        type: String,
+    }
 }, {
     timestamps: true,
 });

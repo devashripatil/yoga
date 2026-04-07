@@ -23,7 +23,7 @@ const getUserBookings = async (req, res) => {
 // @access  Private
 const createBooking = async (req, res) => {
   try {
-    const { classId, sessions, paymentProof } = req.body;
+    const { classId, sessions, paymentProof, paymentMethod, amountPaid } = req.body;
 
     // Check if class exists
     const singleClass = await Class.findById(classId);
@@ -53,7 +53,7 @@ const createBooking = async (req, res) => {
     }
 
     const chosenSessions = sessions || 1;
-    const totalAmount = singleClass.feePerSession * chosenSessions;
+    const totalAmount = amountPaid || (singleClass.feePerSession * chosenSessions);
 
     // Create booking
     const booking = await Booking.create({
@@ -61,7 +61,9 @@ const createBooking = async (req, res) => {
       classId,
       sessions: chosenSessions,
       totalAmount,
+      amountPaid: totalAmount,
       paymentProof,
+      paymentMethod: paymentMethod || 'upi',
       status: 'pending'
     });
 
@@ -163,7 +165,7 @@ const cancelAnyBooking = async (req, res) => {
 // @access  Private/Admin
 const verifyBooking = async (req, res) => {
   try {
-    const { status } = req.body; // 'confirmed' or 'rejected'
+    const { status, meetingLink } = req.body; // 'confirmed' or 'rejected'
     const booking = await Booking.findById(req.params.bookingId).populate('classId');
 
     if (!booking) {
@@ -171,6 +173,9 @@ const verifyBooking = async (req, res) => {
     }
 
     booking.status = status;
+    if (meetingLink) {
+      booking.meetingLink = meetingLink;
+    }
     await booking.save();
 
     // Create notification for the user

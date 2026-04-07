@@ -3,6 +3,7 @@ import api from '../../utils/api';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import toast from 'react-hot-toast';
+import { ExternalLink, Calendar, Clock, IndianRupee, Video, Info } from 'lucide-react';
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -11,7 +12,9 @@ const MyBookings = () => {
   const fetchBookings = async () => {
     try {
       const { data } = await api.get('/bookings/my-bookings');
-      setBookings(data.data);
+      // Only show confirmed or active bookings as per requirements
+      const confirmedBookings = data.data.filter(b => b.status === 'confirmed' || b.status === 'active');
+      setBookings(confirmedBookings);
     } catch (error) {
       toast.error('Failed to load bookings');
     } finally {
@@ -34,48 +37,140 @@ const MyBookings = () => {
     }
   };
 
-  if (loading) return <p>Loading your bookings...</p>;
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+      <div className="spinner"></div>
+    </div>
+  );
 
   return (
-    <div>
-      <h1 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>My Bookings</h1>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Manage your upcoming reservations.</p>
+    <div className="animate-fade-in">
+      <div style={{ marginBottom: '2.5rem' }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', fontWeight: 700, color: 'var(--primary)' }}>My Sessions</h1>
+        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Join your confirmed yoga classes and manage your schedule.</p>
+      </div>
 
       {bookings.length === 0 ? (
-        <Card style={{ padding: '3rem', textAlign: 'center' }}>
-          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>You have no bookings yet.</p>
+        <Card style={{ padding: '4rem', textAlign: 'center', backgroundColor: '#f9fafb', border: '2px dashed #e2e8f0' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+              <Calendar size={32} />
+            </div>
+            <div>
+              <h3 style={{ color: '#475569', marginBottom: '0.5rem' }}>No confirmed bookings yet</h3>
+              <p style={{ color: '#94a3b8', maxWidth: '400px', margin: '0 auto' }}>
+                Your booked classes will appear here once they are confirmed by the admin. Check your notifications for updates.
+              </p>
+            </div>
+            <Button variant="primary" onClick={() => window.location.href = '/dashboard/book-class'}>
+              Browse Classes
+            </Button>
+          </div>
         </Card>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {bookings.map((booking) => (
-            <Card key={booking._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', opacity: booking.status === 'cancelled' ? 0.6 : 1 }}>
-              <div>
-                <h3 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>
-                  {booking.classId?.title || 'Class details unavailable'}
-                </h3>
-                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                  {booking.classId?.schedule ? new Date(booking.classId.schedule).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Unknown Time'} • {booking.classId?.duration || '--'} min
-                  {booking.sessions > 1 ? ` • ${booking.sessions} Sessions` : ''}
-                  {booking.totalAmount > 0 ? ` • ₹${booking.totalAmount}` : ''}
-                </p>
-                <div style={{
-                  marginTop: '0.75rem', display: 'inline-block', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600,
-                  backgroundColor: (booking.status === 'confirmed' || booking.status === 'active') ? 'rgba(74, 124, 89, 0.1)' :
-                    (booking.status === 'cancelled' || booking.status === 'rejected') ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)',
-                  color: (booking.status === 'confirmed' || booking.status === 'active') ? 'var(--primary)' :
-                    (booking.status === 'cancelled' || booking.status === 'rejected') ? '#ef4444' : '#f59e0b',
-                }}>
-                  {booking.status.toUpperCase()}
+        <div style={{ display: 'grid', gap: '1.5rem' }}>
+          {bookings.map((booking, index) => {
+            const displayLink = booking.meetingLink || booking.classId?.meetingLink;
+            
+            return (
+              <Card 
+                key={booking._id} 
+                className={`modern-card stagger-${(index % 3) + 1}`}
+                style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  padding: '1.75rem',
+                  border: '1px solid #f1f5f9',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+                }}
+              >
+                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                  <div style={{ 
+                    width: '60px', 
+                    height: '60px', 
+                    borderRadius: '12px', 
+                    backgroundColor: 'rgba(74, 124, 89, 0.1)', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    color: 'var(--primary)',
+                    fontWeight: 700
+                  }}>
+                    <Video size={24} />
+                  </div>
+                  
+                  <div>
+                    <h3 style={{ margin: '0 0 0.5rem 0', color: '#1e293b', fontSize: '1.25rem', fontWeight: 700 }}>
+                      {booking.classId?.title || 'Class details unavailable'}
+                    </h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', color: '#64748b', fontSize: '0.9rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Calendar size={14} />
+                        {booking.classId?.schedule || 'Time TBD'}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Clock size={14} />
+                        {booking.classId?.duration || '--'} min • {booking.sessions} Sessions
+                      </div>
+                      {booking.totalAmount > 0 && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#16a34a', fontWeight: 600 }}>
+                          <IndianRupee size={14} />
+                          PAID
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              {(booking.status === 'confirmed' || booking.status === 'active' || booking.status === 'pending') && new Date(booking.classId?.schedule || new Date(8640000000000000)) > new Date() && (
-                <Button variant="outline" size="sm" onClick={() => handleCancel(booking._id)} style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
-                  Cancel
-                </Button>
-              )}
-            </Card>
-          ))}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+                  {displayLink ? (
+                    <Button 
+                      variant="primary" 
+                      onClick={() => window.open(displayLink, '_blank')}
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.6rem',
+                        padding: '0.75rem 1.5rem',
+                        borderRadius: 'var(--radius-md)',
+                        boxShadow: '0 4px 12px rgba(74, 124, 89, 0.25)'
+                      }}
+                    >
+                      <Video size={18} /> Join Now
+                    </Button>
+                  ) : (
+                    <div style={{ 
+                      padding: '0.75rem 1.25rem', 
+                      borderRadius: 'var(--radius-md)', 
+                      backgroundColor: '#f1f5f9', 
+                      color: '#64748b', 
+                      fontSize: '0.875rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}>
+                      <Info size={16} /> Link coming soon
+                    </div>
+                  )}
+                  
+                  <Button 
+                    variant="outline" 
+                    onClick={() => handleCancel(booking._id)} 
+                    style={{ 
+                      color: '#ef4444', 
+                      borderColor: 'rgba(239, 68, 68, 0.2)',
+                      padding: '0.75rem'
+                    }}
+                    title="Cancel Booking"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>

@@ -33,7 +33,7 @@ const getRecommendations = async (req, res) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const prompt = `
 You are a yoga instructor recommending yoga classes to users. Based on their goals, experience level, and preferences, suggest the most suitable classes available on the website.

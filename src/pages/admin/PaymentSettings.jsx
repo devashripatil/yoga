@@ -195,7 +195,7 @@ const PaymentSettings = () => {
                                 style={{ width: '200px', height: '200px', objectFit: 'contain', margin: '0 auto', display: 'block', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}
                             />
                         ) : settings.upiId ? (
-                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'white', display: 'inline-block', borderRadius: 'var(--radius-sm)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'white', borderRadius: 'var(--radius-sm)' }}>
                                 <QRCodeSVG value={upiUri} size={200} />
                             </div>
                         ) : (

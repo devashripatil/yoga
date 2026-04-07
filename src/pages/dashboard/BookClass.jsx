@@ -3,115 +3,32 @@ import api from '../../utils/api';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Recommendations from '../../components/Recommendations';
-import { Clock, Calendar, Users, IndianRupee, X } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
+import { Clock, Calendar, Users, IndianRupee, X, Info } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const BookClass = () => {
+  const navigate = useNavigate();
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const [adminSettings, setAdminSettings] = useState(null);
-
-  // Modal State
-  const [selectedClass, setSelectedClass] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [sessionsToBook, setSessionsToBook] = useState(1);
-  const [paymentProof, setPaymentProof] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState('');
-  const [bookingLoading, setBookingLoading] = useState(false);
 
   useEffect(() => {
-    const fetchClassesAndSettings = async () => {
+    const fetchClasses = async () => {
       try {
-        const [classesRes, settingsRes] = await Promise.all([
-          api.get('/classes'),
-          fetch('http://localhost:5000/api/admin-settings').then(res => res.json())
-        ]);
-        setClasses(classesRes.data);
-        setAdminSettings(settingsRes);
+        const { data } = await api.get('/classes');
+        setClasses(data);
       } catch (error) {
-        toast.error('Failed to load data');
+        toast.error('Failed to load classes');
       } finally {
         setLoading(false);
       }
     };
-    fetchClassesAndSettings();
+    fetchClasses();
   }, []);
 
-  const openBookingModal = (cls) => {
-    setSelectedClass(cls);
-    setSessionsToBook(1);
-    setPaymentProof(null);
-    setPreviewUrl('');
-    setIsModalOpen(true);
-  };
-
-  const closeBookingModal = () => {
-    setIsModalOpen(false);
-    setSelectedClass(null);
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPaymentProof(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
-  const handleBook = async (e) => {
-    e.preventDefault();
-    if (!paymentProof && React.feePerSession > 0) {
-      // If payment required but no proof uploaded
-      // (Optional: validate)
-    }
-
-    setBookingLoading(true);
-    try {
-      let proofUrl = '';
-
-      if (paymentProof) {
-        const formData = new FormData();
-        formData.append('image', paymentProof);
-        const uploadRes = await fetch('http://localhost:5000/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        if (uploadRes.ok) {
-          const uploadData = await uploadRes.json();
-          proofUrl = uploadData.url;
-        } else {
-          throw new Error('Screenshot upload failed');
-        }
-      }
-
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          classId: selectedClass._id,
-          sessions: sessionsToBook,
-          paymentProof: proofUrl
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success('Booking requested successfully!');
-        closeBookingModal();
-      } else {
-        throw new Error(data.message || 'Failed to book');
-      }
-    } catch (error) {
-      toast.error(error.message || 'Failed to request booking');
-    } finally {
-      setBookingLoading(false);
-    }
+  const handleBookRedirect = (cls) => {
+    navigate('/dashboard/payment', { state: { classData: cls, slots: sessionsToBook } });
   };
 
   if (loading) return <p>Loading classes...</p>;
@@ -137,9 +54,25 @@ const BookClass = () => {
                   </span>
                 </div>
 
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '1rem', lineHeight: 1.5, flexGrow: 1 }}>
                   {cls.description}
                 </p>
+
+                <div style={{ backgroundColor: 'var(--background)', padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Select Slots:</span>
+                    <select
+                      value={sessionsToBook}
+                      onChange={(e) => setSessionsToBook(Number(e.target.value))}
+                      style={{ padding: '0.2rem 0.5rem', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '0.85rem' }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {[...Array(cls.totalSessions || 5)].map((_, i) => (
+                        <option key={i + 1} value={i + 1}>{i + 1}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
@@ -162,8 +95,8 @@ const BookClass = () => {
               </div>
 
               <div style={{ padding: '1.5rem', borderTop: '1px solid var(--border)', backgroundColor: '#f9fafb', borderBottomLeftRadius: 'var(--radius-lg)', borderBottomRightRadius: 'var(--radius-lg)' }}>
-                <Button onClick={() => openBookingModal(cls)} style={{ width: '100%' }}>
-                  Make Booking Request
+                <Button onClick={() => handleBookRedirect(cls)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  Proceed to Payment <IndianRupee size={16} />
                 </Button>
               </div>
             </Card>
@@ -171,82 +104,6 @@ const BookClass = () => {
         )}
       </div>
 
-      {isModalOpen && selectedClass && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1rem' }}>
-          <Card style={{ width: '100%', maxWidth: '600px', padding: '2rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
-            <button onClick={closeBookingModal} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
-              <X size={24} />
-            </button>
-
-            <h2 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>Book {selectedClass.title}</h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Review details and complete your payment.</p>
-
-            <form onSubmit={handleBook} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Instructor:</span>
-                  <span style={{ fontWeight: 500 }}>{selectedClass.instructor || 'Admin'}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Fee per session:</span>
-                  <span style={{ fontWeight: 500 }}>₹{selectedClass.feePerSession || 0}</span>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid #e2e8f0' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Sessions to book:</span>
-                  <select
-                    value={sessionsToBook}
-                    onChange={(e) => setSessionsToBook(Number(e.target.value))}
-                    style={{ padding: '0.25rem 0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}
-                  >
-                    {[...Array(selectedClass.totalSessions || 1)].map((_, i) => (
-                      <option key={i + 1} value={i + 1}>{i + 1}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed #cbd5e1', fontWeight: 600, fontSize: '1.1rem', color: '#0f172a' }}>
-                  <span>Total Due:</span>
-                  <span style={{ color: 'var(--primary-dark)' }}>₹{(selectedClass.feePerSession || 0) * sessionsToBook}</span>
-                </div>
-              </div>
-
-              {adminSettings && (
-                <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '1.5rem', textAlign: 'center' }}>
-                  <h3 style={{ fontSize: '1rem', marginBottom: '1rem', color: '#1e293b' }}>Payment Information</h3>
-
-                  {adminSettings.qrCodeUrl ? (
-                    <img src={`http://localhost:5000${adminSettings.qrCodeUrl}`} alt="Payment QR" style={{ width: '150px', height: '150px', objectFit: 'contain', margin: '0 auto', display: 'block', border: '1px solid #e2e8f0', borderRadius: 'var(--radius-sm)' }} />
-                  ) : adminSettings.upiId ? (
-                    <div style={{ margin: '0 auto 1.5rem auto', display: 'flex', justifyContent: 'center' }}>
-                      <QRCodeSVG value={`upi://pay?pa=${adminSettings.upiId}&pn=${encodeURIComponent(adminSettings.adminName)}&cu=INR`} size={150} />
-                    </div>
-                  ) : (
-                    <p style={{ color: '#ef4444', fontSize: '0.875rem' }}>No payment methods configured by admin.</p>
-                  )}
-
-                  <div style={{ marginTop: '1rem', fontSize: '0.9rem' }}>
-                    <strong>Pay to: </strong> {adminSettings.adminName} <br />
-                    <strong style={{ color: 'var(--primary)' }}>{adminSettings.upiId}</strong>
-                  </div>
-
-                  <div style={{ marginTop: '1.5rem', textAlign: 'left' }}>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Upload Payment Screenshot *</label>
-                    <input type="file" required accept="image/*" onChange={handleImageChange} style={{ display: 'block', width: '100%', padding: '0.5rem', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)' }} />
-                    {previewUrl && (
-                      <img src={previewUrl} alt="Preview" style={{ marginTop: '1rem', width: '100%', maxHeight: '150px', objectFit: 'contain', borderRadius: 'var(--radius-md)' }} />
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <Button type="submit" variant="primary" disabled={bookingLoading} style={{ width: '100%' }}>
-                {bookingLoading ? 'Submitting...' : 'Submit Booking Request'}
-              </Button>
-            </form>
-          </Card>
-        </div>
-      )}
     </div>
   );
 };

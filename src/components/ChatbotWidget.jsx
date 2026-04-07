@@ -31,19 +31,13 @@ const ChatbotWidget = () => {
         setIsTyping(true);
 
         try {
-            // Send to backend API
-            const response = await fetch('http://localhost:5000/api/yoga-chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: userMsg })
-            });
+            // Send to backend API using custom utility
+            const response = await api.post('/yoga-chat', { message: userMsg });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
+            if (response.data && response.data.response) {
+                setMessages(prev => [...prev, { role: 'ai', content: response.data.response }]);
             } else {
-                throw new Error(data.error || 'Failed to get response');
+                throw new Error('Failed to get response');
             }
         } catch (error) {
             console.error('Chat error:', error);

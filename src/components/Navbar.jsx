@@ -30,29 +30,29 @@ const Navbar = ({ className = '' }) => {
       <div className="container navbar-container">
         {/* Left Side: Logo & Brand */}
         <a href="/" className="navbar-brand">
-          <div className="navbar-logo"></div>
+          <img src="/logo.png" alt="Sattva Yoga Logo" className="navbar-logo-img" />
           Sattva Yoga
         </a>
-        
+
         {/* Right Side: Desktop Menu */}
         <div className="navbar-menu-desktop">
           {navLinks.map(link => (
-            <a 
-              key={link} 
-              href={`/#${link.toLowerCase()}`} 
+            <a
+              key={link}
+              href={`/#${link.toLowerCase()}`}
               className={`nav-link ${activePage === link ? 'active' : ''}`}
-              onClick={(e) => { 
-                e.preventDefault(); 
-                setActivePage(link); 
+              onClick={(e) => {
+                e.preventDefault();
+                setActivePage(link);
                 if (location.pathname !== '/') {
                   navigate('/');
                   setTimeout(() => {
                     const el = document.getElementById(link.toLowerCase());
-                    if (el) window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth'});
+                    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
                   }, 100);
                 } else {
                   const el = document.getElementById(link.toLowerCase());
-                  if (el) window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth'});
+                  if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
                 }
               }}
             >
@@ -62,18 +62,18 @@ const Navbar = ({ className = '' }) => {
 
           {!isLoggedIn ? (
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <a 
-                href="/login" 
+              <a
+                href="/login"
                 className={`nav-link ${activePage === 'Login' ? 'active' : ''}`}
-                onClick={(e) => { 
-                  e.preventDefault(); 
+                onClick={(e) => {
+                  e.preventDefault();
                   setActivePage('Login');
                   navigate('/login');
                 }}
               >
                 Login
               </a>
-              <Button 
+              <Button
                 variant="primary"
                 onClick={() => {
                   setActivePage('Register');
@@ -85,20 +85,20 @@ const Navbar = ({ className = '' }) => {
             </div>
           ) : (
             <div className="profile-dropdown-container">
-              <button 
+              <button
                 className="profile-icon-btn"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <div className="profile-icon">{user?.name ? user.name.charAt(0).toUpperCase() : 'U'}</div>
               </button>
-              
+
               {isDropdownOpen && (
                 <div className="profile-dropdown">
                   <div style={{ padding: '0.5rem 1.5rem', opacity: 0.7, fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
                     Welcome back!
                   </div>
                   <hr className="dropdown-divider" />
-                  <button 
+                  <button
                     className="dropdown-item"
                     onClick={() => {
                       setIsDropdownOpen(false);
@@ -108,7 +108,7 @@ const Navbar = ({ className = '' }) => {
                   >
                     Dashboard
                   </button>
-                  <button 
+                  <button
                     className="dropdown-item logout-btn"
                     onClick={() => {
                       logoutUser();
@@ -125,7 +125,7 @@ const Navbar = ({ className = '' }) => {
         </div>
 
         {/* Mobile Hamburger Icon */}
-        <button 
+        <button
           className="hamburger-btn"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
@@ -139,36 +139,36 @@ const Navbar = ({ className = '' }) => {
       {isMobileMenuOpen && (
         <div className="navbar-menu-mobile">
           {navLinks.map(link => (
-            <a 
-              key={link} 
-              href={`/#${link.toLowerCase()}`} 
+            <a
+              key={link}
+              href={`/#${link.toLowerCase()}`}
               className={`mobile-nav-link ${activePage === link ? 'active' : ''}`}
-              onClick={(e) => { 
-                e.preventDefault(); 
+              onClick={(e) => {
+                e.preventDefault();
                 setActivePage(link);
                 setIsMobileMenuOpen(false);
                 if (location.pathname !== '/') {
                   navigate('/');
                   setTimeout(() => {
                     const el = document.getElementById(link.toLowerCase());
-                    if (el) window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth'});
+                    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
                   }, 100);
                 } else {
                   const el = document.getElementById(link.toLowerCase());
-                  if (el) window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth'});
+                  if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
                 }
               }}
             >
               {link}
             </a>
           ))}
-          
+
           <hr className="mobile-divider" />
 
           {!isLoggedIn ? (
             <div className="mobile-auth-actions">
-              <a 
-                href="/login" 
+              <a
+                href="/login"
                 className="mobile-nav-link"
                 onClick={(e) => {
                   e.preventDefault();
@@ -179,8 +179,8 @@ const Navbar = ({ className = '' }) => {
               >
                 Login
               </a>
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 style={{ width: '100%', marginTop: '1rem' }}
                 onClick={() => {
                   setActivePage('Register');
@@ -198,7 +198,7 @@ const Navbar = ({ className = '' }) => {
                 <span>Welcome back!</span>
               </div>
               <hr className="mobile-divider" />
-              <button 
+              <button
                 className="mobile-nav-link sub"
                 onClick={() => {
                   navigate('/dashboard');
@@ -208,7 +208,7 @@ const Navbar = ({ className = '' }) => {
               >
                 Dashboard
               </button>
-              <button 
+              <button
                 className="mobile-nav-link sub logout-btn-mobile"
                 onClick={() => {
                   logoutUser();

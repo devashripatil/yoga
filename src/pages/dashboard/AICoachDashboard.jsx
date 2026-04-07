@@ -57,73 +57,120 @@ const AICoachDashboard = () => {
   }
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem',  marginBottom: '2rem' }}>
+    <div className="animate-fade-in" style={{ animation: 'fadeIn 0.8s ease-out' }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'flex-start', 
+        flexWrap: 'wrap', 
+        gap: '1.5rem',  
+        marginBottom: '2.5rem',
+        background: 'linear-gradient(to right, var(--white), transparent)',
+        padding: '1.5rem',
+        borderRadius: 'var(--radius-lg)',
+        borderLeft: '5px solid var(--primary)'
+      }}>
         <div>
-          <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Sparkles size={28} color="var(--primary)" /> My AI Wellness Coach
+          <h1 style={{ fontSize: '2.25rem', marginBottom: '0.5rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700 }}>
+            <Sparkles size={32} color="var(--primary)" /> My AI Wellness Coach
           </h1>
-          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
-            Your personalized guide to {user?.wellnessGoal ? user.wellnessGoal.toLowerCase() : 'wellness'}. 
-            Updated contextually to fit your {user?.timeAvailable || 30} min schedule on a {user?.dietPreference || 'Balanced'} diet.
+          <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.1rem' }}>
+            Your personalized guide to <span style={{ color: 'var(--primary-dark)', fontWeight: 600 }}>{user?.wellnessGoal ? user.wellnessGoal.toLowerCase() : 'wellness'}</span>. 
           </p>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.75rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+             <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Clock size={16} /> {user?.timeAvailable || 30} min session</span>
+             <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Utensils size={16} /> {user?.dietPreference || 'Balanced'} diet</span>
+          </div>
         </div>
         <Button 
           variant="secondary" 
           onClick={handleRegenerate} 
           disabled={generating}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', boxShadow: 'var(--shadow-md)' }}
         >
           {generating ? <RotateCw size={18} className="animate-spin" /> : <RefreshCw size={18} />}
-          {generating ? 'Generating...' : 'Refresh Plan'}
+          {generating ? 'Crafting Plan...' : 'Refresh Plan'}
         </Button>
       </div>
 
       {plan?.weeklySummary && (
-        <Card style={{ backgroundColor: 'rgba(74, 124, 89, 0.05)', border: '1px solid var(--primary-light)', marginBottom: '2.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', color: 'var(--primary)' }}>
-            <Activity size={20} />
-            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>Weekly Progress & Motivation</h3>
+        <Card style={{ 
+          backgroundColor: 'rgba(74, 124, 89, 0.03)', 
+          border: '1px solid var(--primary-light)', 
+          marginBottom: '3rem',
+          padding: '2rem',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.05 }}>
+             <Sparkles size={120} color="var(--primary)" />
           </div>
-          <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{plan.weeklySummary}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', color: 'var(--primary)' }}>
+            <Activity size={24} />
+            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>Weekly Progress & Motivation</h3>
+          </div>
+          <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '1.05rem', position: 'relative', zIndex: 1 }}>{plan.weeklySummary}</p>
         </Card>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2.5rem', marginBottom: '4rem' }}>
         
         {/* Yoga Routine */}
-        <Card style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
-             <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.5rem', borderRadius: '50%', color: 'var(--white)' }}>
-               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+        <Card style={{ 
+          padding: '2.5rem', 
+          display: 'flex', 
+          flexDirection: 'column',
+          boxShadow: 'var(--shadow-lg)',
+          borderTop: '4px solid var(--primary)',
+          transition: 'transform 0.3s ease'
+        }} className="hover-lift">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem', borderBottom: '1px solid var(--border)', paddingBottom: '1.25rem' }}>
+             <div style={{ backgroundColor: 'var(--primary)', padding: '0.6rem', borderRadius: 'var(--radius-md)', color: 'var(--white)' }}>
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
              </div>
-             <h2 style={{ margin: 0, fontSize: '1.3rem', color: 'var(--text-primary)' }}>Today's Yoga Routine</h2>
+             <div>
+               <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-primary)', fontWeight: 700 }}>Today's Yoga Routine</h2>
+               <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Custom sequence for your {user?.experienceLevel || 'Beginner'} level</p>
+             </div>
           </div>
           
-          {/* Markdown Content Wrapper */}
-          <div className="markdown-content" style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, flexGrow: 1 }}>
+          <div className="markdown-content" style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.7, flexGrow: 1 }}>
             {plan?.yogaRoutine ? (
               <ReactMarkdown>{plan.yogaRoutine}</ReactMarkdown>
             ) : (
-              <p>No routine generated yet. Click 'Refresh Plan' to generate.</p>
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                <p>No routine generated yet. Click 'Refresh Plan' to begin your journey.</p>
+              </div>
             )}
           </div>
         </Card>
 
         {/* Diet Plan */}
-        <Card style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
-             <div style={{ backgroundColor: 'var(--secondary)', padding: '0.5rem', borderRadius: '50%', color: 'var(--primary-dark)' }}>
-               <Utensils size={20} />
+        <Card style={{ 
+          padding: '2.5rem', 
+          display: 'flex', 
+          flexDirection: 'column',
+          boxShadow: 'var(--shadow-lg)',
+          borderTop: '4px solid var(--secondary-dark)',
+          transition: 'transform 0.3s ease'
+        }} className="hover-lift">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem', borderBottom: '1px solid var(--border)', paddingBottom: '1.25rem' }}>
+             <div style={{ backgroundColor: 'var(--secondary-dark)', padding: '0.6rem', borderRadius: 'var(--radius-md)', color: 'var(--white)' }}>
+               <Utensils size={24} />
              </div>
-             <h2 style={{ margin: 0, fontSize: '1.3rem', color: 'var(--text-primary)' }}>Today's Diet Plan</h2>
+             <div>
+               <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-primary)', fontWeight: 700 }}>Mindful Diet Plan</h2>
+               <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Nourishing your body with {user?.dietPreference || 'Balanced'} meals</p>
+             </div>
           </div>
           
-          <div className="markdown-content" style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, flexGrow: 1 }}>
+          <div className="markdown-content" style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.7, flexGrow: 1 }}>
             {plan?.dietPlan ? (
               <ReactMarkdown>{plan.dietPlan}</ReactMarkdown>
             ) : (
-              <p>No diet plan generated yet. Click 'Refresh Plan' to generate.</p>
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                <p>Nutritional guidance will appear here once your plan is ready.</p>
+              </div>
             )}
           </div>
         </Card>
@@ -134,24 +181,39 @@ const AICoachDashboard = () => {
 
       {/* Basic inline styles to handle Markdown standard elements gracefully inside the cards */}
       <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .hover-lift:hover {
+          transform: translateY(-8px);
+        }
         .markdown-content h1, .markdown-content h2, .markdown-content h3 {
-          margin-top: 1.25rem;
-          margin-bottom: 0.75rem;
-          color: var(--text-primary);
-          font-size: 1.1rem;
+          margin-top: 1.5rem;
+          margin-bottom: 1rem;
+          color: var(--primary-dark);
+          font-size: 1.15rem;
+          font-weight: 600;
         }
         .markdown-content p {
-          margin-bottom: 1rem;
+          margin-bottom: 1.25rem;
         }
         .markdown-content ul, .markdown-content ol {
           padding-left: 1.5rem;
-          margin-bottom: 1rem;
+          margin-bottom: 1.25rem;
         }
         .markdown-content li {
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
         }
         .markdown-content strong {
           color: var(--text-primary);
+        }
+        .markdown-content blockquote {
+          border-left: 3px solid var(--primary-light);
+          padding-left: 1rem;
+          margin-left: 0;
+          font-style: italic;
+          color: var(--text-secondary);
         }
       `}} />
 

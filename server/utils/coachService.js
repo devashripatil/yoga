@@ -25,8 +25,8 @@ const generateWellnessPlan = async (userId) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ 
-            model: "gemini-2.5-flash",
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash",
             systemInstruction: "You are a personalized AI Wellness Coach, Yoga Instructor, and Dietitian. Your tone is supportive, motivational, and highly focused on the user's specific goals. Provide practical, daily actionable advice. Do not provide medical diagnoses."
         });
 
@@ -47,21 +47,22 @@ Available Classes on Platform:
 ${classListInfo}
 
 ---
-Based on this information, return a JSON object with EXACTLY these four keys:
+ Based on this information, return a JSON object with EXACTLY these five keys:
 1. "yogaRoutine": A markdown-formatted daily yoga routine (Warm-up, Main flow, Cool-down) that fits within their ${user.timeAvailable} minutes limit. Be specific with poses.
 2. "dietPlan": A markdown-formatted 1-day meal plan (Breakfast, Lunch, Dinner, Snacks) adhering to a ${user.dietPreference} diet and supporting their goal of ${user.wellnessGoal}.
 3. "weeklySummary": A short paragraph (text) evaluating their progress (they have completed ${completedCount} sessions) and offering motivation for the days ahead.
-4. "recommendedClassTitles": An array of exactly 2 strings, which MUST exactly match titles from the "Available Classes on Platform" list above, representing the best classes for them right now.
+4. "wellnessSnapshot": A single, catchy 1-line phrase (max 15 words) that summarizes their current focus or a motivational insight for the day (e.g. "Focus on spine health and deep breaths today.").
+5. "recommendedClassTitles": An array of exactly 2 strings, which MUST exactly match titles from the "Available Classes on Platform" list above, representing the best classes for them right now.
 
 OUTPUT ONLY VALID JSON. Do not include markdown codeblocks or any other text outside the JSON object.
 `;
 
         const result = await model.generateContent(prompt);
         let aiResponse = result.response.text();
-        
+
         // Clean JSON
         aiResponse = aiResponse.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
-        
+
         let planData;
         try {
             planData = JSON.parse(aiResponse);
@@ -81,6 +82,7 @@ OUTPUT ONLY VALID JSON. Do not include markdown codeblocks or any other text out
             yogaRoutine: planData.yogaRoutine || 'Routine generating...',
             dietPlan: planData.dietPlan || 'Diet plan generating...',
             weeklySummary: planData.weeklySummary || 'Keep up the good work!',
+            wellnessSnapshot: planData.wellnessSnapshot || 'Breathe in, breathe out.',
             recommendedClasses: recommendedClassIds
         });
 

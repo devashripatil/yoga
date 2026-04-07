@@ -21,6 +21,9 @@ const coachPlanSchema = new mongoose.Schema({
   weeklySummary: {
     type: String, // AI encouragement and assessment
   },
+  wellnessSnapshot: {
+    type: String, // 1-line catchy routine summary
+  },
   recommendedClasses: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Class'

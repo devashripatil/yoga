@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import SectionLayout from './components/SectionLayout';
 import Button from './components/Button';
@@ -25,9 +25,16 @@ import UserManagement from './pages/admin/UserManagement';
 import AdminNotifications from './pages/admin/AdminNotifications';
 import CalendarView from './pages/admin/CalendarView';
 import PaymentSettings from './pages/admin/PaymentSettings';
+import PaymentPage from './pages/dashboard/PaymentPage';
+import MyQueries from './pages/dashboard/MyQueries';
+import ManageQueries from './pages/admin/ManageQueries';
+import UserCalendar from './pages/dashboard/UserCalendar';
 
 import ChatbotWidget from './components/ChatbotWidget';
+import ResponsiveMap from './components/ResponsiveMap';
 
+import api from './utils/api';
+import toast from 'react-hot-toast';
 import AuthContext from './context/AuthContext';
 import './index.css';
 
@@ -65,33 +72,63 @@ const RegisterPage = () => {
   };
 
   return (
-    <SectionLayout background="background" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', padding: '8rem 0 4rem 0' }}>
-      <div className="container">
-        <div style={{ display: 'flex', flexWrap: 'wrap-reverse', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: 'var(--shadow-hover)' }}>
+    <SectionLayout background="background" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6rem 1rem', background: 'linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%)' }}>
+      <div style={{ maxWidth: '1100px', width: '100%', position: 'relative' }}>
+        {/* Floating Back Button */}
+        <Link 
+          to="/" 
+          style={{ 
+            position: 'absolute', 
+            top: '-3.5rem', 
+            left: 0, 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.5rem', 
+            color: 'var(--primary-dark)', 
+            textDecoration: 'none', 
+            fontWeight: 700,
+            fontSize: '1rem',
+            padding: '0.5rem 1rem',
+            borderRadius: 'var(--radius-md)',
+            backgroundColor: 'rgba(255,255,255,0.5)',
+            backdropFilter: 'blur(4px)',
+            transition: 'all 0.2s'
+          }}
+          onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.8)'}
+          onMouseOut={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.5)'}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back to Website
+        </Link>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap-reverse', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)' }}>
           {/* Left Side: Form */}
-          <div style={{ flex: '1 1 500px', padding: '4rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ flex: '1 1 500px', padding: '4rem 3.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div style={{ marginBottom: '2.5rem' }}>
-              <h2 style={{ color: 'var(--primary)', marginBottom: '0.5rem', fontSize: '2.5rem' }}>Join Us</h2>
-              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.1rem' }}>Create an account to track your progress and book classes.</p>
+              <h2 style={{ color: 'var(--primary-dark)', marginBottom: '0.75rem', fontSize: '2.5rem', fontWeight: 800 }}>Join the Journey</h2>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.1rem', lineHeight: 1.5 }}>Create your Sattva account to begin your personalized spiritual practice.</p>
             </div>
 
             <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <FormInput label="Full Name" name="name" value={formData.name} onChange={handleChange} type="text" placeholder="John Doe" required />
-              <FormInput label="Email Address" name="email" value={formData.email} onChange={handleChange} type="email" placeholder="john@example.com" required />
-              <FormInput label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} type="tel" placeholder="+1 (555) 000-0000" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                <FormInput label="Full Name" name="name" value={formData.name} onChange={handleChange} type="text" placeholder="Aarav Sharma" required />
+                <FormInput label="Email Address" name="email" value={formData.email} onChange={handleChange} type="email" placeholder="aarav@example.com" required />
+              </div>
+              
+              <FormInput label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} type="tel" placeholder="+91 98765 43210" />
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                 <FormInput label="Password" name="password" value={formData.password} onChange={handleChange} type="password" placeholder="••••••••" required />
                 <FormInput label="Confirm Password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} type="password" placeholder="••••••••" required />
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                 <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-secondary)' }}>What is your goal?</label>
+                  <label style={{ fontSize: '0.9rem', fontWeight: 700, color: '#475569' }}>WELLNESS GOAL</label>
                   <select name="wellnessGoal" value={formData.wellnessGoal} onChange={handleChange} style={{
-                    padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontFamily: 'inherit', fontSize: '1rem', backgroundColor: 'var(--background)'
+                    padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: '1rem', backgroundColor: 'var(--background)', outline: 'none'
                   }}>
-                    <option value="">-- Choose a goal --</option>
+                    <option value="">-- Choose Goal --</option>
                     <option value="Reduce stress">Reduce stress</option>
                     <option value="Improve flexibility">Improve flexibility</option>
                     <option value="Meditation practice">Meditation practice</option>
@@ -100,59 +137,58 @@ const RegisterPage = () => {
                 </div>
 
                 <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Experience level</label>
+                  <label style={{ fontSize: '0.9rem', fontWeight: 700, color: '#475569' }}>EXPERIENCE LEVEL</label>
                   <select name="experienceLevel" value={formData.experienceLevel} onChange={handleChange} style={{
-                    padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontFamily: 'inherit', fontSize: '1rem', backgroundColor: 'var(--background)'
+                    padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: '1rem', backgroundColor: 'var(--background)', outline: 'none'
                   }}>
-                    <option value="">-- Choose experience --</option>
+                    <option value="">-- Level --</option>
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
                     <option value="Advanced">Advanced</option>
                   </select>
                 </div>
-
-                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Preferred time</label>
-                  <select name="preferredTime" value={formData.preferredTime} onChange={handleChange} style={{
-                    padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontFamily: 'inherit', fontSize: '1rem', backgroundColor: 'var(--background)'
-                  }}>
-                    <option value="">-- Choose time --</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Evening">Evening</option>
-                  </select>
-                </div>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Diet Preference</label>
-                    <select name="dietPreference" value={formData.dietPreference} onChange={handleChange} style={{
-                      padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontFamily: 'inherit', fontSize: '1rem', backgroundColor: 'var(--background)'
-                    }}>
-                      <option value="">-- Choose diet --</option>
-                      <option value="Vegetarian">Vegetarian</option>
-                      <option value="Vegan">Vegan</option>
-                      <option value="Balanced">Balanced</option>
-                    </select>
-                  </div>
-                  
-                  <FormInput label="Daily Time Available (mins)" name="timeAvailable" value={formData.timeAvailable} onChange={handleChange} type="number" min="10" max="180" />
-                </div>
               </div>
 
-              <Button type="submit" variant="primary" size="lg" style={{ width: '100%', marginTop: '1rem' }}>
-                Create Account
+              <Button type="submit" variant="primary" size="lg" style={{ width: '100%', marginTop: '1rem', padding: '1.1rem', fontSize: '1.1rem', fontWeight: 700, boxShadow: '0 4px 12px rgba(74, 124, 89, 0.25)' }}>
+                Create My Account
               </Button>
             </form>
 
-            <div style={{ textAlign: 'center', marginTop: '2.5rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
-              <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
-                Already have an account? <a href="/login" onClick={(e) => { e.preventDefault(); navigate('/login'); }} style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Login instead</a>
+            <div style={{ textAlign: 'center', marginTop: '2.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1rem' }}>
+                Already part of the tribe? <a href="/login" onClick={(e) => { e.preventDefault(); navigate('/login'); }} style={{ color: 'var(--primary-dark)', fontWeight: 800, textDecoration: 'none' }}>Login instead</a>
               </p>
             </div>
           </div>
 
-          {/* Right Side: Image */}
-          <div style={{ flex: '1 1 400px', backgroundImage: 'url("https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&fit=crop")', backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '300px' }}></div>
+          {/* Right Side: Image with Overlay */}
+          <div style={{ 
+            flex: '1 1 400px', 
+            backgroundImage: 'url("https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&fit=crop")', 
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center', 
+            minHeight: '400px',
+            position: 'relative'
+          }}>
+            <div style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              right: 0, 
+              bottom: 0, 
+              backgroundColor: 'rgba(74, 124, 89, 0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              padding: '4rem',
+              color: 'white',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🧘‍♀️</div>
+              <h3 style={{ fontSize: '2.25rem', marginBottom: '1rem', fontWeight: 800 }}>Begin Your Practice</h3>
+              <p style={{ opacity: 0.95, fontSize: '1.2rem', lineHeight: 1.6 }}>Join 1000+ shadhakas in their daily journey toward mindfulness and physical strength.</p>
+            </div>
+          </div>
         </div>
       </div>
     </SectionLayout>
@@ -241,8 +277,11 @@ const AdminLoginPage = () => {
             </Button>
           </form>
 
-          <div style={{ textAlign: 'center', marginTop: '2rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
-            <a href="#home" style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', textDecoration: 'none' }}>&larr; Return to main site</a>
+          <div style={{ textAlign: 'center', marginTop: '2rem', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
+            <Link to="/" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+              Back to Website
+            </Link>
           </div>
         </Card>
       </div>
@@ -271,21 +310,82 @@ const LoginPage = () => {
   };
 
   return (
-    <SectionLayout background="background" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', padding: '8rem 0 4rem 0' }}>
-      <div className="container">
-        <div style={{ display: 'flex', flexWrap: 'wrap', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: 'var(--shadow-hover)' }}>
-          {/* Left Side: Image */}
-          <div style={{ flex: '1 1 400px', backgroundImage: 'url("https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?q=80&w=800&fit=crop")', backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '300px' }}></div>
+    <SectionLayout background="background" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem 1rem', background: 'linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%)' }}>
+      <div style={{ maxWidth: '1000px', width: '100%', position: 'relative' }}>
+        {/* Floating Back Button */}
+        <Link 
+          to="/" 
+          style={{ 
+            position: 'absolute', 
+            top: '-3.5rem', 
+            left: 0, 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.5rem', 
+            color: 'var(--primary-dark)', 
+            textDecoration: 'none', 
+            fontWeight: 700,
+            fontSize: '1rem',
+            padding: '0.5rem 1rem',
+            borderRadius: 'var(--radius-md)',
+            backgroundColor: 'rgba(255,255,255,0.5)',
+            backdropFilter: 'blur(4px)',
+            transition: 'all 0.2s'
+          }}
+          onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.8)'}
+          onMouseOut={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.5)'}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back to Website
+        </Link>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)', minHeight: '600px' }}>
+          {/* Left Side: Image with Overlay */}
+          <div style={{ 
+            flex: '1 1 400px', 
+            backgroundImage: 'url("/om_bg.png")', 
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center', 
+            minHeight: '400px',
+            position: 'relative'
+          }}>
+            <div style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              right: 0, 
+              bottom: 0, 
+              backgroundColor: 'rgba(74, 124, 89, 0.2)', // Sattva primary tinted overlay
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+              padding: '3rem',
+              color: 'white',
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+            }}>
+              <h3 style={{ fontSize: '2rem', marginBottom: '0.5rem', fontWeight: 700 }}>Find Your Inner Balance</h3>
+              <p style={{ opacity: 0.9, fontSize: '1.1rem' }}>Your journey to spiritual wellness continues here.</p>
+            </div>
+          </div>
 
           {/* Right Side: Form */}
-          <div style={{ flex: '1 1 500px', padding: '4rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ marginBottom: '2.5rem' }}>
-              <h2 style={{ color: 'var(--primary)', marginBottom: '0.5rem', fontSize: '2.5rem' }}>Welcome Back</h2>
-              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.1rem' }}>Log in to access your Sattva Yoga dashboard.</p>
+          <div style={{ flex: '1 1 500px', padding: '4rem 3.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ marginBottom: '3rem' }}>
+              <h2 style={{ color: 'var(--primary-dark)', marginBottom: '0.75rem', fontSize: '2.75rem', fontWeight: 800 }}>Welcome Back</h2>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.15rem', lineHeight: 1.5 }}>Access your personal Sattva Yoga space to track your shadhana and book sessions.</p>
             </div>
 
-            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <FormInput label="Email Address" name="email" value={formData.email} onChange={handleChange} type="email" placeholder="john@example.com" required />
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+              <FormInput 
+                label="Email Address" 
+                name="email" 
+                value={formData.email} 
+                onChange={handleChange} 
+                type="email" 
+                placeholder="yogi@example.com" 
+                required 
+                style={{ padding: '0.9rem 1.25rem' }} 
+              />
 
               <div style={{ position: 'relative' }}>
                 <FormInput
@@ -296,45 +396,49 @@ const LoginPage = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   required
-                  style={{ paddingRight: '2.5rem' }}
+                  style={{ padding: '0.9rem 1.25rem', paddingRight: '3rem' }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
                     position: 'absolute',
-                    right: '0.75rem',
-                    top: '2.8rem',
+                    right: '1rem',
+                    top: '2.9rem',
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
                     color: 'var(--text-secondary)',
                     display: 'flex',
                     alignItems: 'center',
-                    padding: '0.25rem'
+                    padding: '0.5rem'
                   }}
                   title={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                   ) : (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                   )}
                 </button>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-0.75rem' }}>
-                <a href="#forgot-password" style={{ fontSize: '0.9rem', color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Forgot password?</a>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '-0.5rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.9rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                  <input type="checkbox" style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }} /> 
+                  Stay remembered
+                </label>
+                <a href="#forgot-password" style={{ fontSize: '0.9rem', color: 'var(--primary-dark)', fontWeight: 700, textDecoration: 'none' }}>Recovery account?</a>
               </div>
 
-              <Button type="submit" variant="primary" size="lg" style={{ width: '100%', marginTop: '0.5rem' }}>
-                Sign In
+              <Button type="submit" variant="primary" size="lg" style={{ width: '100%', marginTop: '1rem', padding: '1.1rem', fontSize: '1.1rem', fontWeight: 700, boxShadow: '0 4px 12px rgba(74, 124, 89, 0.25)' }}>
+                Connect Now
               </Button>
             </form>
 
-            <div style={{ textAlign: 'center', marginTop: '2.5rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
-              <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
-                Don't have an account? <a href="/register" onClick={(e) => { e.preventDefault(); navigate('/register'); }} style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Register here</a>
+            <div style={{ textAlign: 'center', marginTop: '3rem', borderTop: '1px solid #f1f5f9', paddingTop: '2rem' }}>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1rem' }}>
+                New to the path? <a href="/register" onClick={(e) => { e.preventDefault(); navigate('/register'); }} style={{ color: 'var(--primary-dark)', fontWeight: 800, textDecoration: 'none' }}>Register here</a>
               </p>
             </div>
           </div>
@@ -415,85 +519,54 @@ const HomeView = () => {
         id="about"
         background="background"
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4rem', alignItems: 'center' }}>
-          {/* Left Side: Instructor Image */}
-          <div style={{ flex: '1 1 400px' }}>
-            <div style={{
-              width: '100%',
-              height: '550px',
-              backgroundColor: 'var(--accent)',
-              borderRadius: 'var(--radius-xl)',
-              backgroundImage: 'url("https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=800")',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              boxShadow: 'var(--shadow-lg)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
-                padding: '2rem',
-                color: 'white'
-              }}>
-                <h3 style={{ margin: 0, fontSize: '1.75rem', fontFamily: 'var(--font-heading)', color: 'white' }}>Maya Sharma</h3>
-                <p style={{ margin: 0, opacity: 0.9 }}>Lead Yoga Instructor</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Side: Instructor Content */}
-          <div style={{ flex: '1 1 400px' }}>
-            <h2 style={{ fontSize: '3rem', marginBottom: '1.5rem', color: 'var(--primary)', fontFamily: 'var(--font-heading)' }}>Meet Your Instructor</h2>
-            <p style={{ fontSize: '1.1rem', marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>
-              Namaste! I'm Maya, and my journey with yoga began over 15 years ago. I believe that yoga is not just about physical postures, but a holistic path to discovering your inner peace and potential. My classes are designed to be a safe haven where you can explore mindful movement, deepen your breath, and align your spirit.
+        <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '3.5rem', marginBottom: '2rem', color: 'var(--primary)', fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Meet Your Instructor</h2>
+          
+          <div style={{ marginBottom: '3rem' }}>
+            <p style={{ fontSize: '1.25rem', lineHeight: 1.8, color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+              Namaste! I'm <span style={{ color: 'var(--primary-dark)', fontWeight: 600 }}>Sonali Attarde</span>, and my journey with yoga began over 15 years ago. I believe that yoga is not just about physical postures, but a holistic path to discovering your inner peace and potential.
             </p>
+            <p style={{ fontSize: '1.15rem', lineHeight: 1.8, color: 'var(--text-secondary)' }}>
+              My classes are designed to be a safe haven where you can explore mindful movement, deepen your breath, and align your spirit. Whether you are a beginner or an advanced practitioner, I am here to guide you on your personal path to wellness.
+            </p>
+          </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', margin: '2rem 0' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ backgroundColor: 'var(--secondary)', color: 'var(--primary-dark)', padding: '0.75rem', borderRadius: '50%' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
-                </div>
-                <div>
-                  <h4 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.1rem' }}>15+ Years Experience</h4>
-                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Practicing and teaching globally</p>
-                </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+            <div style={{ padding: '1.5rem', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
+              <div style={{ backgroundColor: 'var(--secondary)', color: 'var(--primary-dark)', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
               </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ backgroundColor: 'var(--secondary)', color: 'var(--primary-dark)', padding: '0.75rem', borderRadius: '50%' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                </div>
-                <div>
-                  <h4 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.1rem' }}>500-Hour RYT Certified</h4>
-                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Yoga Alliance registered</p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ backgroundColor: 'var(--secondary)', color: 'var(--primary-dark)', padding: '0.75rem', borderRadius: '50%' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
-                </div>
-                <div>
-                  <h4 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.1rem' }}>Specializations</h4>
-                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Vinyasa Flow, Yin Yoga, Mindfulness Meditation</p>
-                </div>
-              </div>
+              <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>15+ Years</h4>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Experience in global practice</p>
             </div>
 
-            <Button
-              size="lg"
-              onClick={() => {
-                const el = document.getElementById('classes');
-                if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
-              }}
-            >
-              Book Your Class
-            </Button>
+            <div style={{ padding: '1.5rem', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
+              <div style={{ backgroundColor: 'var(--secondary)', color: 'var(--primary-dark)', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              </div>
+              <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>RYT Certified</h4>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Yoga Alliance registered</p>
+            </div>
+
+            <div style={{ padding: '1.5rem', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
+              <div style={{ backgroundColor: 'var(--secondary)', color: 'var(--primary-dark)', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+              </div>
+              <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>Specializations</h4>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Vinyasa Flow, Yin Yoga, Meditation</p>
+            </div>
           </div>
+
+          <Button 
+            size="lg" 
+            onClick={() => {
+              const el = document.getElementById('classes');
+              if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+            }}
+            style={{ padding: '1rem 2.5rem', fontSize: '1.1rem' }}
+          >
+            Join My Practice
+          </Button>
         </div>
       </SectionLayout>
 
@@ -635,17 +708,45 @@ const HomeView = () => {
         </div>
       </SectionLayout>
 
+      {/* Yoga Gurus Section */}
+      <SectionLayout
+        title="Our Inspiration: Yoga Gurus"
+        subtitle="Honoring the masters who have paved the spiritual path for us."
+      >
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem' }}>
+          {[
+            { name: "Sri Sri Ravi Shankar", role: "Spiritual Leader", img: "/gurus/sri_sri.png", desc: "Founder of Art of Living, spreading peace and Sudarshan Kriya globally." },
+            { name: "Sadhguru", role: "Yogi & Visionary", img: "/gurus/sadhguru.png", desc: "Founder of Isha Foundation, dedicated to inner well-being and environmental projects." },
+            { name: "Baba Ramdev", role: "Yoga Master", img: "/gurus/ramdev.png", desc: "Renowned for popularizing Pranayama and Hatha Yoga across India." },
+            { name: "Hansaji Yogendra", role: "Director, The Yoga Institute", img: "/gurus/hansaji.png", desc: "The woman behind the world's oldest organized yoga center." },
+            { name: "B.K.S. Iyengar", role: "Legendary Master", img: "/gurus/iyengar.png", desc: "Pioneer of Iyengar Yoga, known for detail, precision, and alignment." }
+          ].map((guru, idx) => (
+            <div key={idx} className="guru-card modern-card">
+              <img src={guru.img} alt={guru.name} className="guru-img" />
+              <div className="guru-overlay">
+                <h4 style={{ color: 'white', marginBottom: '0.5rem' }}>{guru.name}</h4>
+                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', marginBottom: '1rem' }}>{guru.role}</p>
+                <p style={{ color: 'white', fontSize: '0.85rem', lineHeight: '1.4' }}>{guru.desc}</p>
+              </div>
+              <div className="guru-name">
+                <h4 style={{ color: 'white', margin: 0, fontSize: '1.1rem' }}>{guru.name}</h4>
+              </div>
+            </div>
+          ))}
+        </div>
+      </SectionLayout>
+
       {/* Custom Testimonials Placeholder (Removed old sections) */}
       <SectionLayout
         background="background"
-        title="Student Testimonials"
-        subtitle="Hear what others have experienced practicing with Maya."
+        title="Sadhaka Anubhav (Student's Voice)"
+        subtitle="Spiritual transformations and experiences shared by our practitioners with Sonali."
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
           {[
-            { text: "Maya's classes have completely transformed my mornings. Her gentle guidance and focus on alignment have helped me cure my chronic back pain.", author: "Sarah Jenkins" },
-            { text: "I've never felt so present. The way she blends mindfulness with physical challenge is exactly what my stressful work week needs.", author: "David Chen" },
-            { text: "As a beginner, I was intimidated, but Maya made every pose accessible. I've gained strength and a new perspective on wellness.", author: "Emily Rivera" }
+            { text: "Sonali's classes have completely transformed my mornings. Her gentle guidance and focus on alignment have helped me cure my chronic back pain.", author: "Rupali Patil" },
+            { text: "I've never felt so present. The way she blends mindfulness with physical challenge is exactly what my stressful work week needs.", author: "Sapna Mahajan" },
+            { text: "As a beginner, I was intimidated, but Sonali made every pose accessible. I've gained strength and a new perspective on wellness.", author: "Monali Jain" }
           ].map((test, idx) => (
             <Card key={idx} style={{ padding: '2.5rem', backgroundColor: 'var(--white)', position: 'relative' }}>
               <div style={{ position: 'absolute', top: '1rem', right: '1.5rem', fontSize: '4rem', color: 'var(--secondary)', opacity: 0.5, fontFamily: 'serif', lineHeight: 1 }}>"</div>
@@ -673,25 +774,39 @@ const HomeView = () => {
           {/* Contact Form */}
           <Card style={{ padding: '2.5rem', backgroundColor: 'var(--white)' }}>
             <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>Send a Message</h3>
-            <form onSubmit={(e) => {
+            <form onSubmit={async (e) => {
               e.preventDefault();
-              alert('Thank you for reaching out! Your message has been sent successfully.');
-              e.target.reset();
+              if (!isLoggedIn) {
+                toast.error("Please login to send a query");
+                navigate('/login');
+                return;
+              }
+              try {
+                const formData = new FormData(e.target);
+                await api.post('/queries', {
+                  subject: formData.get('subject') || 'General Inquiry',
+                  message: formData.get('message')
+                });
+                toast.success('Thank you! Your query has been submitted.');
+                e.target.reset();
+              } catch (error) {
+                toast.error("Failed to submit query");
+              }
             }} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Full Name *</label>
-                <input required type="text" placeholder="Jane Doe" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', fontSize: '1rem', fontFamily: 'var(--font-body)', outline: 'none' }} />
+                <input required name="name" type="text" placeholder="Jane Doe" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', fontSize: '1rem', fontFamily: 'var(--font-body)', outline: 'none' }} />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Email Address *</label>
-                <input required type="email" placeholder="jane@example.com" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', fontSize: '1rem', fontFamily: 'var(--font-body)', outline: 'none' }} />
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Subject</label>
+                <input name="subject" type="text" placeholder="Regarding class schedule..." style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', fontSize: '1rem', fontFamily: 'var(--font-body)', outline: 'none' }} />
               </div>
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Message *</label>
-                <textarea required rows="4" placeholder="How can we help you?" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', fontSize: '1rem', fontFamily: 'var(--font-body)', resize: 'vertical', outline: 'none' }}></textarea>
+                <textarea required name="message" rows="4" placeholder="How can we help you?" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', fontSize: '1rem', fontFamily: 'var(--font-body)', resize: 'vertical', outline: 'none' }}></textarea>
               </div>
 
               <Button type="submit" variant="primary" size="lg" style={{ marginTop: '0.5rem', width: '100%' }}>Send Message</Button>
@@ -709,7 +824,7 @@ const HomeView = () => {
                   </div>
                   <div>
                     <strong style={{ display: 'block', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Location</strong>
-                    <span style={{ color: 'var(--text-secondary)', lineHeight: 1.5 }}>123 Serenity Lane<br />Wellness Valley, CA 90210</span>
+                    <span style={{ color: 'var(--text-secondary)', lineHeight: 1.5 }}>Padamalaya Pearl, Veerbhadra Nagar Road,<br />Veerbhadra Nagar, Baner, Pune, Maharashtra</span>
                   </div>
                 </div>
 
@@ -719,7 +834,7 @@ const HomeView = () => {
                   </div>
                   <div>
                     <strong style={{ display: 'block', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Phone</strong>
-                    <span style={{ color: 'var(--text-secondary)' }}>+1 (555) 123-4567</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>+91 9623127008</span>
                   </div>
                 </div>
 
@@ -729,31 +844,17 @@ const HomeView = () => {
                   </div>
                   <div>
                     <strong style={{ display: 'block', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Email</strong>
-                    <span style={{ color: 'var(--text-secondary)' }}>hello@sattvayoga.com</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>yogasattava@gmail.com</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Map Placeholder */}
-            <div style={{
-              width: '100%',
-              height: '250px',
-              backgroundColor: 'var(--accent)',
-              borderRadius: 'var(--radius-md)',
-              overflow: 'hidden',
-              position: 'relative',
-              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)'
-            }}>
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-dark)', opacity: 0.6 }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>Interactive Map Placeholder</span>
-              </div>
-            </div>
-          </div>
-
+          {/* Map Section */}
+          <ResponsiveMap />
         </div>
-      </SectionLayout>
+      </div>
+    </SectionLayout>
 
       {/* Call to Action */}
       <section style={{ padding: '6rem 0', backgroundColor: 'var(--primary)', color: 'var(--white)', textAlign: 'center' }}>
@@ -823,16 +924,15 @@ const HomeView = () => {
               <h4 style={{ color: 'var(--white)', margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: 600 }}>Contact Information</h4>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <li style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                  <span>123 Serenity Lane<br />Wellness Valley, CA 90210</span>
+                  <span>Padamalaya Pearl, Veerbhadra Nagar Road,<br />Veerbhadra Nagar, Baner, Pune, Maharashtra</span>
                 </li>
                 <li style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                  <span>+1 (555) 123-4567</span>
+                  <span>+91 9623127008</span>
                 </li>
                 <li style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                  <span>hello@sattvayoga.com</span>
+                  <span>yogasattava@gmail.com</span>
                 </li>
               </ul>
             </div>
@@ -906,6 +1006,9 @@ const App = () => {
           <Route path="tracker" element={<Tracker />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="payment" element={<PaymentPage />} />
+          <Route path="queries" element={<MyQueries />} />
+          <Route path="calendar" element={<UserCalendar />} />
         </Route>
 
         {/* Protected Admin Routes */}
@@ -922,6 +1025,7 @@ const App = () => {
           <Route path="notifications" element={<AdminNotifications />} />
           <Route path="calendar" element={<CalendarView />} />
           <Route path="payment-settings" element={<PaymentSettings />} />
+          <Route path="queries" element={<ManageQueries />} />
         </Route>
 
         {/* Catch-all */}

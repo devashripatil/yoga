@@ -32,6 +32,19 @@ const bookingSchema = new mongoose.Schema({
   paymentProof: {
     type: String, // URL or path to image
   },
+  paymentMethod: {
+    type: String,
+    enum: ['upi', 'card', 'netbanking', 'cash'],
+    default: 'upi'
+  },
+  amountPaid: {
+    type: Number,
+    default: 0
+  },
+  meetingLink: {
+    type: String,
+    default: ''
+  },
 }, {
   timestamps: true,
 });
