@@ -51,12 +51,21 @@ app.use('/api/recommendations', require('./routes/recommendationRoutes'));
 app.use('/api/coach', require('./routes/coachRoutes'));
 app.use('/api/queries', require('./routes/queryRoutes'));
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../dist')));
+
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Root endpoint
-app.get('/', (req, res) => {
+// Root endpoint for API check
+app.get('/api', (req, res) => {
   res.send('Sattva Yoga API is running');
+});
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 // Error handling payload for unknown routes

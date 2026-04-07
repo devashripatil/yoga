@@ -415,7 +415,7 @@ const ManageClasses = () => {
                 />
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#475569' }}>Description</label>
+                  <label style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase' }}>Description</label>
                   <textarea
                     name="description"
                     value={formData.description}
@@ -457,7 +457,7 @@ const ManageClasses = () => {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#475569' }}>Difficulty</label>
+                    <label style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase' }}>Difficulty</label>
                     <select
                       name="difficulty"
                       value={formData.difficulty}
@@ -479,7 +479,7 @@ const ManageClasses = () => {
                     </select>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#475569' }}>Category</label>
+                    <label style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase' }}>Category</label>
                     <select
                       name="category"
                       value={formData.category}
@@ -542,7 +542,7 @@ const ManageClasses = () => {
                   borderRadius: 'var(--radius-md)',
                   border: '1px solid #e2e8f0'
                 }}>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#475569', marginBottom: '0.75rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.75rem', textTransform: 'uppercase' }}>
                     Session Image
                   </label>
                   <input 

@@ -41,6 +41,8 @@ import './index.css';
 const RegisterPage = () => {
   const navigate = useNavigate();
   const { registerUser } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -109,24 +111,96 @@ const RegisterPage = () => {
               <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.1rem', lineHeight: 1.5 }}>Create your Sattva account to begin your personalized spiritual practice.</p>
             </div>
 
-            <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+            <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
                 <FormInput label="Full Name" name="name" value={formData.name} onChange={handleChange} type="text" placeholder="Aarav Sharma" required />
                 <FormInput label="Email Address" name="email" value={formData.email} onChange={handleChange} type="email" placeholder="aarav@example.com" required />
               </div>
               
               <FormInput label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} type="tel" placeholder="+91 98765 43210" />
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                <FormInput label="Password" name="password" value={formData.password} onChange={handleChange} type="password" placeholder="••••••••" required />
-                <FormInput label="Confirm Password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} type="password" placeholder="••••••••" required />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                <FormInput 
+                  label="Password" 
+                  name="password" 
+                  value={formData.password} 
+                  onChange={handleChange} 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="••••••••" 
+                  required 
+                >
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '1rem',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'var(--text-muted)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '0.25rem',
+                      zIndex: 2,
+                      transition: 'color 0.2s'
+                    }}
+                    onMouseOver={e => e.currentTarget.style.color = 'var(--primary)'}
+                    onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
+                  >
+                    {showPassword ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    )}
+                  </button>
+                </FormInput>
+                <FormInput 
+                  label="Confirm Password" 
+                  name="confirmPassword" 
+                  value={formData.confirmPassword} 
+                  onChange={handleChange} 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  placeholder="••••••••" 
+                  required 
+                >
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '1rem',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'var(--text-muted)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '0.25rem',
+                      zIndex: 2,
+                      transition: 'color 0.2s'
+                    }}
+                    onMouseOver={e => e.currentTarget.style.color = 'var(--primary)'}
+                    onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
+                  >
+                    {showConfirmPassword ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    )}
+                  </button>
+                </FormInput>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.9rem', fontWeight: 700, color: '#475569' }}>WELLNESS GOAL</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>WELLNESS GOAL</label>
                   <select name="wellnessGoal" value={formData.wellnessGoal} onChange={handleChange} style={{
-                    padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: '1rem', backgroundColor: 'var(--background)', outline: 'none'
+                    padding: '0.875rem 1rem', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--border)', fontSize: '1rem', backgroundColor: 'var(--background)', outline: 'none', transition: 'all 0.2s'
                   }}>
                     <option value="">-- Choose Goal --</option>
                     <option value="Reduce stress">Reduce stress</option>
@@ -136,10 +210,10 @@ const RegisterPage = () => {
                   </select>
                 </div>
 
-                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.9rem', fontWeight: 700, color: '#475569' }}>EXPERIENCE LEVEL</label>
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>EXPERIENCE LEVEL</label>
                   <select name="experienceLevel" value={formData.experienceLevel} onChange={handleChange} style={{
-                    padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: '1rem', backgroundColor: 'var(--background)', outline: 'none'
+                    padding: '0.875rem 1rem', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--border)', fontSize: '1rem', backgroundColor: 'var(--background)', outline: 'none', transition: 'all 0.2s'
                   }}>
                     <option value="">-- Level --</option>
                     <option value="Beginner">Beginner</option>
@@ -149,13 +223,13 @@ const RegisterPage = () => {
                 </div>
               </div>
 
-              <Button type="submit" variant="primary" size="lg" style={{ width: '100%', marginTop: '1rem', padding: '1.1rem', fontSize: '1.1rem', fontWeight: 700, boxShadow: '0 4px 12px rgba(74, 124, 89, 0.25)' }}>
+              <Button type="submit" variant="primary" size="lg" style={{ width: '100%', marginTop: '0.5rem', padding: '1rem', fontSize: '1.1rem', fontWeight: 700 }}>
                 Create My Account
               </Button>
             </form>
 
-            <div style={{ textAlign: 'center', marginTop: '2.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
-              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1rem' }}>
+            <div style={{ textAlign: 'center', marginTop: '2rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.95rem' }}>
                 Already part of the tribe? <a href="/login" onClick={(e) => { e.preventDefault(); navigate('/login'); }} style={{ color: 'var(--primary-dark)', fontWeight: 800, textDecoration: 'none' }}>Login instead</a>
               </p>
             </div>
@@ -217,15 +291,16 @@ const AdminLoginPage = () => {
   };
 
   return (
-    <SectionLayout background="background" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', paddingTop: '8rem' }}>
+    <SectionLayout background="background" style={{ minHeight: '90vh', display: 'flex', alignItems: 'center', paddingTop: '4rem', background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)' }}>
       <div style={{ maxWidth: '450px', margin: '0 auto', width: '100%' }}>
-        <Card style={{ padding: '3rem', borderTop: '4px solid var(--primary)' }}>
+        <div className="auth-card" style={{ padding: '3.5rem 3rem', borderTop: '6px solid #1f2937' }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <h2 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem', fontSize: '2rem' }}>Admin Access</h2>
-            <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Secure login for Sattva Yoga administrators.</p>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛡️</div>
+            <h2 style={{ color: '#1f2937', marginBottom: '0.5rem', fontSize: '2.25rem', fontWeight: 800 }}>Admin Access</h2>
+            <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1rem' }}>Authorized personnel only.</p>
           </div>
 
-          <form onSubmit={handleAdminLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <form onSubmit={handleAdminLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <FormInput
               label="Admin Email"
               name="email"
@@ -236,32 +311,35 @@ const AdminLoginPage = () => {
               required
             />
 
-            <div style={{ position: 'relative' }}>
-              <FormInput
-                label="Password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                required
-                style={{ paddingRight: '2.5rem' }}
-              />
+            <FormInput
+              label="Password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              required
+            >
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 style={{
                   position: 'absolute',
-                  right: '0.75rem',
-                  top: '2.5rem',
+                  right: '1rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: 'var(--text-secondary)',
+                  color: 'var(--text-muted)',
                   display: 'flex',
                   alignItems: 'center',
-                  padding: '0.25rem'
+                  padding: '0.25rem',
+                  zIndex: 2,
+                  transition: 'color 0.2s'
                 }}
+                onMouseOver={e => e.currentTarget.style.color = 'var(--primary)'}
+                onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
                 title={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
@@ -270,20 +348,20 @@ const AdminLoginPage = () => {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 )}
               </button>
-            </div>
+            </FormInput>
 
-            <Button type="submit" style={{ width: '100%', marginTop: '1rem', backgroundColor: '#1f2937', color: 'white' }} size="lg">
+            <Button type="submit" style={{ width: '100%', marginTop: '1rem', backgroundColor: '#1f2937', color: 'white', padding: '1rem', fontSize: '1.1rem', fontWeight: 700 }} size="lg">
               Secure Login
             </Button>
           </form>
 
-          <div style={{ textAlign: 'center', marginTop: '2rem', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
-            <Link to="/" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+          <div style={{ textAlign: 'center', marginTop: '2.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
+            <Link to="/" style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'color 0.2s' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-              Back to Website
+              Return to Homepage
             </Link>
           </div>
-        </Card>
+        </div>
       </div>
     </SectionLayout>
   );
@@ -310,7 +388,7 @@ const LoginPage = () => {
   };
 
   return (
-    <SectionLayout background="background" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem 1rem', background: 'linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%)' }}>
+    <SectionLayout background="background" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem 1rem', background: 'linear-gradient(135deg, #f8fafceb 0%, #cbd5e1eb 100%)' }}>
       <div style={{ maxWidth: '1000px', width: '100%', position: 'relative' }}>
         {/* Floating Back Button */}
         <Link 
@@ -326,24 +404,32 @@ const LoginPage = () => {
             textDecoration: 'none', 
             fontWeight: 700,
             fontSize: '1rem',
-            padding: '0.5rem 1rem',
+            padding: '0.5rem 1.25rem',
             borderRadius: 'var(--radius-md)',
-            backgroundColor: 'rgba(255,255,255,0.5)',
-            backdropFilter: 'blur(4px)',
-            transition: 'all 0.2s'
+            backgroundColor: 'rgba(255,255,255,0.7)',
+            backdropFilter: 'blur(8px)',
+            boxShadow: 'var(--shadow-sm)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            zIndex: 10
           }}
-          onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.8)'}
-          onMouseOut={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.5)'}
+          onMouseOver={e => {
+            e.currentTarget.style.backgroundColor = 'var(--white)';
+            e.currentTarget.style.transform = 'translateX(-5px)';
+          }}
+          onMouseOut={e => {
+            e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.7)';
+            e.currentTarget.style.transform = 'translateX(0)';
+          }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-          Back to Website
+          Back to Sanctuary
         </Link>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)', minHeight: '600px' }}>
+        <div className="auth-card" style={{ display: 'flex', flexWrap: 'wrap', minHeight: '620px' }}>
           {/* Left Side: Image with Overlay */}
           <div style={{ 
             flex: '1 1 400px', 
-            backgroundImage: 'url("/om_bg.png")', 
+            backgroundImage: 'url("https://images.unsplash.com/photo-1545208393-2160281b3f77?q=80&w=800&fit=crop")', 
             backgroundSize: 'cover', 
             backgroundPosition: 'center', 
             minHeight: '400px',
@@ -355,24 +441,25 @@ const LoginPage = () => {
               left: 0, 
               right: 0, 
               bottom: 0, 
-              backgroundColor: 'rgba(74, 124, 89, 0.2)', // Sattva primary tinted overlay
+              background: 'linear-gradient(to bottom, rgba(74, 124, 89, 0.1), rgba(74, 124, 89, 0.6))',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-end',
-              padding: '3rem',
+              padding: '4rem 3rem',
               color: 'white',
-              textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+              textShadow: '0 2px 10px rgba(0,0,0,0.3)'
             }}>
-              <h3 style={{ fontSize: '2rem', marginBottom: '0.5rem', fontWeight: 700 }}>Find Your Inner Balance</h3>
-              <p style={{ opacity: 0.9, fontSize: '1.1rem' }}>Your journey to spiritual wellness continues here.</p>
+              <div style={{ fontSize: '3.5rem', marginBottom: '1.5rem' }}>🧘‍♂️</div>
+              <h3 style={{ fontSize: '2.5rem', marginBottom: '0.75rem', fontWeight: 800, lineHeight: 1.2 }}>Eternal Peace Awaits</h3>
+              <p style={{ opacity: 0.95, fontSize: '1.2rem', fontWeight: 500 }}>Your journey to mindfulness and physical balance continues here.</p>
             </div>
           </div>
 
           {/* Right Side: Form */}
-          <div style={{ flex: '1 1 500px', padding: '4rem 3.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ flex: '1 1 500px', padding: '4.5rem 4rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'var(--white)' }}>
             <div style={{ marginBottom: '3rem' }}>
               <h2 style={{ color: 'var(--primary-dark)', marginBottom: '0.75rem', fontSize: '2.75rem', fontWeight: 800 }}>Welcome Back</h2>
-              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.15rem', lineHeight: 1.5 }}>Access your personal Sattva Yoga space to track your shadhana and book sessions.</p>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.1rem', lineHeight: 1.6 }}>Access your personal Sattva Yoga space to track your shadhana and book sessions.</p>
             </div>
 
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
@@ -384,35 +471,37 @@ const LoginPage = () => {
                 type="email" 
                 placeholder="yogi@example.com" 
                 required 
-                style={{ padding: '0.9rem 1.25rem' }} 
               />
 
-              <div style={{ position: 'relative' }}>
-                <FormInput
-                  label="Password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  required
-                  style={{ padding: '0.9rem 1.25rem', paddingRight: '3rem' }}
-                />
+              <FormInput
+                label="Password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                required
+              >
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
                     position: 'absolute',
                     right: '1rem',
-                    top: '2.9rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
-                    color: 'var(--text-secondary)',
+                    color: 'var(--text-muted)',
                     display: 'flex',
                     alignItems: 'center',
-                    padding: '0.5rem'
+                    padding: '0.5rem',
+                    zIndex: 2,
+                    transition: 'color 0.2s'
                   }}
+                  onMouseOver={e => e.currentTarget.style.color = 'var(--primary)'}
+                  onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
                   title={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -421,23 +510,23 @@ const LoginPage = () => {
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                   )}
                 </button>
-              </div>
+              </FormInput>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '-0.5rem' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.9rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                  <input type="checkbox" style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }} /> 
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 500 }}>
+                  <input type="checkbox" style={{ width: '18px', height: '18px', accentColor: 'var(--primary)', cursor: 'pointer' }} /> 
                   Stay remembered
                 </label>
-                <a href="#forgot-password" style={{ fontSize: '0.9rem', color: 'var(--primary-dark)', fontWeight: 700, textDecoration: 'none' }}>Recovery account?</a>
+                <a href="#forgot-password" style={{ fontSize: '0.95rem', color: 'var(--primary-dark)', fontWeight: 700, textDecoration: 'none', transition: 'opacity 0.2s' }} onMouseOver={e => e.currentTarget.style.opacity = '0.8'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>Recovery account?</a>
               </div>
 
-              <Button type="submit" variant="primary" size="lg" style={{ width: '100%', marginTop: '1rem', padding: '1.1rem', fontSize: '1.1rem', fontWeight: 700, boxShadow: '0 4px 12px rgba(74, 124, 89, 0.25)' }}>
+              <Button type="submit" variant="primary" style={{ width: '100%', marginTop: '0.5rem', padding: '1.1rem', fontSize: '1.2rem', fontWeight: 800 }}>
                 Connect Now
               </Button>
             </form>
 
-            <div style={{ textAlign: 'center', marginTop: '3rem', borderTop: '1px solid #f1f5f9', paddingTop: '2rem' }}>
-              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1rem' }}>
+            <div style={{ textAlign: 'center', marginTop: '3.5rem', borderTop: '2px solid #f8fafc', paddingTop: '2.5rem' }}>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.05rem', fontWeight: 500 }}>
                 New to the path? <a href="/register" onClick={(e) => { e.preventDefault(); navigate('/register'); }} style={{ color: 'var(--primary-dark)', fontWeight: 800, textDecoration: 'none' }}>Register here</a>
               </p>
             </div>
