@@ -27,10 +27,11 @@ const userSchema = new mongoose.Schema({
   preferredTime: {
     type: String,
     enum: ['Morning', 'Evening'],
+    default: 'Morning'
   },
   dietPreference: {
     type: String,
-    enum: ['Vegetarian', 'Vegan', 'Balanced'],
+    enum: ['Veg', 'Non-Veg', 'Balanced'],
     default: 'Balanced',
   },
   timeAvailable: {

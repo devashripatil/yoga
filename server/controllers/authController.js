@@ -32,7 +32,7 @@ const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user
+    // Create user with normalized data to avoid enum validation errors
     const user = await User.create({
       name,
       email,
@@ -40,9 +40,9 @@ const registerUser = async (req, res) => {
       phone,
       wellnessGoal,
       experienceLevel,
-      preferredTime,
-      dietPreference,
-      timeAvailable
+      preferredTime: preferredTime || 'Morning',
+      dietPreference: dietPreference || 'Balanced',
+      timeAvailable: timeAvailable || 30
     });
 
     if (user) {

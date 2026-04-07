@@ -52,8 +52,8 @@ const RegisterPage = () => {
     phone: '',
     wellnessGoal: '',
     experienceLevel: '',
-    preferredTime: '',
-    dietPreference: '',
+    preferredTime: 'Morning',
+    dietPreference: 'Balanced',
     timeAvailable: 30,
   });
 
@@ -63,6 +63,11 @@ const RegisterPage = () => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
+      return;
+    }
+
+    if (!formData.wellnessGoal || !formData.experienceLevel || !formData.preferredTime || !formData.dietPreference) {
+      alert("Please fill in all spiritual/dietary preferences");
       return;
     }
 
@@ -219,6 +224,29 @@ const RegisterPage = () => {
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
                     <option value="Advanced">Advanced</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>PREFERRED TIME</label>
+                  <select name="preferredTime" value={formData.preferredTime} onChange={handleChange} style={{
+                    padding: '0.875rem 1rem', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--border)', fontSize: '1rem', backgroundColor: 'var(--background)', outline: 'none', transition: 'all 0.2s'
+                  }}>
+                    <option value="Morning">Morning</option>
+                    <option value="Evening">Evening</option>
+                  </select>
+                </div>
+
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>DIET PREFERENCE</label>
+                  <select name="dietPreference" value={formData.dietPreference} onChange={handleChange} style={{
+                    padding: '0.875rem 1rem', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--border)', fontSize: '1rem', backgroundColor: 'var(--background)', outline: 'none', transition: 'all 0.2s'
+                  }}>
+                    <option value="Veg">Veg</option>
+                    <option value="Non-Veg">Non-Veg</option>
+                    <option value="Balanced">Balanced</option>
                   </select>
                 </div>
               </div>
