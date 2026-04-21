@@ -80,7 +80,7 @@ const RegisterPage = () => {
 
   return (
     <SectionLayout background="background" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6rem 1rem', background: 'linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%)' }}>
-      <div style={{ maxWidth: '1100px', width: '100%', position: 'relative' }}>
+      <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', position: 'relative' }}>
         {/* Floating Back Button */}
         <Link 
           to="/" 
@@ -108,8 +108,8 @@ const RegisterPage = () => {
           Back to Website
         </Link>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap-reverse', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)' }}>
-          {/* Left Side: Form */}
+        <div style={{ display: 'flex', backgroundColor: 'var(--white)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)' }}>
+          {/* Form */}
           <div style={{ flex: '1 1 500px', padding: '4rem 3.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div style={{ marginBottom: '2.5rem' }}>
               <h2 style={{ color: 'var(--primary-dark)', marginBottom: '0.75rem', fontSize: '2.5rem', fontWeight: 800 }}>Join the Journey</h2>
@@ -262,35 +262,6 @@ const RegisterPage = () => {
               </p>
             </div>
           </div>
-
-          {/* Right Side: Image with Overlay */}
-          <div style={{ 
-            flex: '1 1 400px', 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&fit=crop")', 
-            backgroundSize: 'cover', 
-            backgroundPosition: 'center', 
-            minHeight: '400px',
-            position: 'relative'
-          }}>
-            <div style={{ 
-              position: 'absolute', 
-              top: 0, 
-              left: 0, 
-              right: 0, 
-              bottom: 0, 
-              backgroundColor: 'rgba(74, 124, 89, 0.3)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              padding: '4rem',
-              color: 'white',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🧘‍♀️</div>
-              <h3 style={{ fontSize: '2.25rem', marginBottom: '1rem', fontWeight: 800 }}>Begin Your Practice</h3>
-              <p style={{ opacity: 0.95, fontSize: '1.2rem', lineHeight: 1.6 }}>Join 1000+ shadhakas in their daily journey toward mindfulness and physical strength.</p>
-            </div>
-          </div>
         </div>
       </div>
     </SectionLayout>
@@ -417,7 +388,7 @@ const LoginPage = () => {
 
   return (
     <SectionLayout background="background" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem 1rem', background: 'linear-gradient(135deg, #f8fafceb 0%, #cbd5e1eb 100%)' }}>
-      <div style={{ maxWidth: '1000px', width: '100%', position: 'relative' }}>
+      <div style={{ maxWidth: '550px', margin: '0 auto', width: '100%', position: 'relative' }}>
         {/* Floating Back Button */}
         <Link 
           to="/" 
@@ -453,38 +424,9 @@ const LoginPage = () => {
           Back to Sanctuary
         </Link>
 
-        <div className="auth-card" style={{ display: 'flex', flexWrap: 'wrap', minHeight: '620px' }}>
-          {/* Left Side: Image with Overlay */}
-          <div style={{ 
-            flex: '1 1 400px', 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1545208393-2160281b3f77?q=80&w=800&fit=crop")', 
-            backgroundSize: 'cover', 
-            backgroundPosition: 'center', 
-            minHeight: '400px',
-            position: 'relative'
-          }}>
-            <div style={{ 
-              position: 'absolute', 
-              top: 0, 
-              left: 0, 
-              right: 0, 
-              bottom: 0, 
-              background: 'linear-gradient(to bottom, rgba(74, 124, 89, 0.1), rgba(74, 124, 89, 0.6))',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'flex-end',
-              padding: '4rem 3rem',
-              color: 'white',
-              textShadow: '0 2px 10px rgba(0,0,0,0.3)'
-            }}>
-              <div style={{ fontSize: '3.5rem', marginBottom: '1.5rem' }}>🧘‍♂️</div>
-              <h3 style={{ fontSize: '2.5rem', marginBottom: '0.75rem', fontWeight: 800, lineHeight: 1.2 }}>Eternal Peace Awaits</h3>
-              <p style={{ opacity: 0.95, fontSize: '1.2rem', fontWeight: 500 }}>Your journey to mindfulness and physical balance continues here.</p>
-            </div>
-          </div>
-
-          {/* Right Side: Form */}
-          <div style={{ flex: '1 1 500px', padding: '4.5rem 4rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'var(--white)' }}>
+        <div className="auth-card" style={{ display: 'flex', minHeight: '600px' }}>
+          {/* Form */}
+          <div style={{ flex: '1 1 100%', padding: '4.5rem 4rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'var(--white)' }}>
             <div style={{ marginBottom: '3rem' }}>
               <h2 style={{ color: 'var(--primary-dark)', marginBottom: '0.75rem', fontSize: '2.75rem', fontWeight: 800 }}>Welcome Back</h2>
               <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.1rem', lineHeight: 1.6 }}>Access your personal Sattva Yoga space to track your shadhana and book sessions.</p>
